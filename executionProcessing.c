@@ -160,6 +160,16 @@ void printProcessStart(const struct ProcessElement *p, int pos)
     }
 }
 
+/*
+void printingFinished(const struct ProcessElement *p, int pos)
+{
+    if (p != NULL)
+    {
+        printf("[%i]+\t[%s]\n", pos, p->cmd);
+    }
+}
+ */
+
 
 
 /*
@@ -171,15 +181,45 @@ void printProcessStart(const struct ProcessElement *p, int pos)
  */
 
 
-void my_execute(char **cmd, int isValid, int pipes, int fileRedirects)
+void my_execute(char **cmd, int isValid, int background)
 {
-    int backgroundCheck = contains(cmd, "&");
-    int inputSymbol = contains(cmd, "<");
+    int backgroundCheck = background;//contains(cmd, "&");
+    /*int inputSymbol = contains(cmd, "<");
     int outputSymbol = contains(cmd, ">");
-    int pipe_count = countOf(cmd, "|");
-    if(isValid == 1 && pipes == 0 && fileRedirects == 0)
+    int pipe_count = countOf(cmd, "|");*/
+    if(isValid == 1)
     {
-        my_executeNormal(cmd, backgroundCheck);
+        int status;
+        pid_t pid = fork();
+
+        if (pid == -1)
+        {
+            //Error
+            printf("Problem executing %s\n", cmd[0]);
+            exit(1);
+        }
+        else if (pid == 0)
+        {
+            //Child
+            execv(cmd[0], cmd);
+            //
+            exit(1);
+        }
+        else
+        {
+            if (backgroundCheck != 0)
+            {
+                waitpid(pid, &status, WNOHANG);
+                pushProcess(mkProcess(pid, -1, cmd));
+            }
+            else
+            {
+                //Parent
+                waitpid(pid, &status, 0);
+                //}
+            }
+        }
+        //my_executeNormal(cmd, backgroundCheck);
     }
     /*else if(isValid == 1 && pipes == 1)
     {
@@ -199,7 +239,7 @@ void my_execute(char **cmd, int isValid, int pipes, int fileRedirects)
     }
 }
 
-void my_executeNormal(char **cmd, int background)
+/*void my_executeNormal(char **cmd, int background)
 {
     int status;
     pid_t pid = fork();
@@ -231,9 +271,68 @@ void my_executeNormal(char **cmd, int background)
         //}
         }
     }
+}*/
+
+/*
+char** my_executePipes(char **cmd, int background)
+{
+    char* filename = (char*)calloc(strlen(cmd[I_loc+1])+1, sizeof(char));
+    strcpy(filename, cmd[I_loc+1]);
+
+    argv = ArrayRemoveElement(argv, I_loc);
+    argv = ArrayRemoveElement(argv, I_loc);
+
+    // update background iterator
+    background = VecContainsStr(argv, "&");
+    char* cmd = ArgvToString(argv);
+    if (background != -1)
+    {
+        argv = ArrayRemoveElement(argv, background);
+    }
+    IORedirect(argv, 1, filename, background, cmd);
+    free(filename);
+    free(cmd);
+
+    return argv;
 }
 
+char** my_executeInput(char **cmd, int background, int inputSymbol)
+{char* filename = (char*)calloc(strlen(cmd[inputSymbol+1])+1, sizeof(char));
+    strcpy(filename, cmd[inputSymbol+1]);
 
+    cmd = ArrayRemoveElement(cmd, inputSymbol);
+    cmd = ArrayRemoveElement(cmd, inputSymbol);
+
+    if (background != -1)
+    {
+        cmd = ArrayRemoveElement(cmd, background);
+    }
+    IORedirect(argv, 1, filename, background, cmd);
+    free(filename);
+    free(cmd);
+
+    return cmd;
+}
+
+char** my_executeOutput(char **cmd, int background, int outputSymbol)
+{
+    char* filename = (char*)calloc(strlen(cmd[outputSymbol+1])+1, sizeof(char));
+    strcpy(filename, cmd[outputSymbol+1]);
+
+    cmd = ArrayRemoveElement(cmd, outputSymbol);
+    cmd = ArrayRemoveElement(cmd, outputSymbol);
+
+    if (background != -1)
+    {
+        cmd = ArrayRemoveElement(cmd, background);
+    }
+    IORedirect(cmd, 0, filename, background, cmd);
+    free(filename);
+    free(cmd);
+
+    return cmd;
+}
+ */
 
 /*
  ___      _ _ _     _
@@ -244,6 +343,7 @@ void my_executeNormal(char **cmd, int background)
 
 void exitShell(char **cmd, int commandCounter)
 {
+
     exitCommandProcess();
     freedom(cmd);
     printf("\nExiting Now!\n    Commands Issued: %u", commandCounter);
@@ -324,31 +424,4 @@ void freedom(char **theArray)
         ++itr;
     }
     free(theArray);
-}
-
-int contains(char** cmd, const char* theString)
-{
-    int itr = 0;
-    while(cmd[itr] != NULL)
-    {
-        if (strcmp(cmd[itr], theString) == 0)
-        {
-            return itr;
-        }
-        itr++;
-    }
-    return -1;
-}
-
-int countOf(char ** cmd, const char* theString)
-{
-    int itr = 0;
-    int count = 0;
-    while (cmd[itr] != NULL)
-    {
-        if (strcmp(cmd[itr], theString) == 0)
-            count++;
-        itr++;
-    }
-    return count;
 }
