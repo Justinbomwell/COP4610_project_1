@@ -112,8 +112,8 @@ void singlepipe(instruction * instr_ptr, int bGround)
 {
 	char * cmd1[2]; 
 	char * cmd2[2]; 
-    cmd[1] = NULL; 
-    cmd[2] = NULL; 
+    cmd1[1] = NULL; 
+    cmd2[1] = NULL; 
 
 	int i;
     for (i = 0; i < instr_ptr->numTokens; i++) {
@@ -166,9 +166,9 @@ void doublepipe(instruction * instr_ptr, int bGround)
     char * cmd1[2]; 
     char * cmd2[2]; 
     char * cmd3[2]; 
-     cmd[1] = NULL; 
-    cmd[2] = NULL; 
-    cmd[3] = NULL; 
+     cmd1[1] = NULL; 
+    cmd2[1] = NULL; 
+    cmd3[1] = NULL; 
 	int i; 
 	int x = 0; 
     for (i = 0; i < instr_ptr->numTokens; i++) {
