@@ -564,26 +564,26 @@ void func(instruction * instr_ptr)
     {
         if(bGround == 1) // & is in
         {
- 
+ 		my_execute(instr_ptr, 1, 1);
         }
         else
         {
-          
+          	my_execute(instr_ptr, 1, 0);
         }
     }
     else if(pathRes(instr_ptr) == 1 && check == 2) // check for '<', '>' to perform i/o
     {
-	my_execute((instr_ptr->tokens), pathRes(instr->ptr));
+	
     }
     else if(check == 3) // check for '|' to perform piping
     {
         if(bGround == 1) // & is in
         {
- 
+ 		
         }
         else
         {
-            
+            	
         }
     }
     else if(check == 4) // check for builtins
