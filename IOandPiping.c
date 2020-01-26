@@ -19,9 +19,11 @@ void IOredirection( instruction* instr_ptr, int bGround)
     char * outputfile; 
     bool input = false; 
     bool output = false; 
-    char * cmd;
+    char * cmd[2];
 
-    strcpy(cmd, (instr_ptr->tokens)[0]);
+
+    strcpy(cmd[0], (instr_ptr->tokens)[0]);
+    cmd[1] = NULL; 
 
     int i;
     for (i = 0; i < instr_ptr->numTokens; i++) 
@@ -108,16 +110,19 @@ void IOredirection( instruction* instr_ptr, int bGround)
 
 void singlepipe(instruction * instr_ptr, int bGround)
 {
-	char * cmd1; 
-	char * cmd2; 
+	char * cmd1[2]; 
+	char * cmd2[2]; 
+    cmd[1] = NULL; 
+    cmd[2] = NULL; 
+
 	int i;
     for (i = 0; i < instr_ptr->numTokens; i++) {
         if ((instr_ptr->tokens)[i] != NULL)
         {
             if (strcmp((instr_ptr->tokens)[i],"|") == 0)
             {
-                strcpy(cmd1, (instr_ptr->tokens)[i-1]);
-                strcpy(cmd2, (instr_ptr->tokens)[i+1]);
+                strcpy(cmd1[0], (instr_ptr->tokens)[i-1]);
+                strcpy(cmd2[0], (instr_ptr->tokens)[i+1]);
             }
         }
     }
@@ -158,9 +163,12 @@ void singlepipe(instruction * instr_ptr, int bGround)
 
 void doublepipe(instruction * instr_ptr, int bGround)
 {
-    char * cmd1; 
-    char * cmd2; 
-    char * cmd3; 
+    char ** cmd1; 
+    char ** cmd2; 
+    char ** cmd3; 
+     cmd[1] = NULL; 
+    cmd[2] = NULL; 
+    cmd[3] = NULL; 
 	int i; 
 	int x = 0; 
     for (i = 0; i < instr_ptr->numTokens; i++) {
@@ -168,12 +176,12 @@ void doublepipe(instruction * instr_ptr, int bGround)
             if (strcmp((instr_ptr->tokens)[i],"|") == 0)
             {
             	x = 1; 
-                strcpy(cmd1, (instr_ptr->tokens)[i-1]);
-                strcpy(cmd2, (instr_ptr->tokens)[i+1]);
+                strcpy(cmd1[0], (instr_ptr->tokens)[i-1]);
+                strcpy(cmd2[0], (instr_ptr->tokens)[i+1]);
             }
             if ((strcmp((instr_ptr->tokens)[i],"<") == 0) && x == 1)
             {
-            	strcpy(cmd3, (instr_ptr->tokens)[i+1]);
+            	strcpy(cmd3[0], (instr_ptr->tokens)[i+1]);
 
             }
     }
