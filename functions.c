@@ -319,8 +319,6 @@ void func(instruction * instr_ptr)
  
     for(a = 0; a < instr_ptr->numTokens; a++)
     {
-	    valid = 0; 
-	    numofpipes = 0; 
 	    
         if(strcmp((instr_ptr->tokens)[a], "<") == 0 || strcmp((instr_ptr->tokens)[a], ">") == 0)
 	{	check = 2;	break;	}
