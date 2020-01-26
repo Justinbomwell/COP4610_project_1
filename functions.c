@@ -17,6 +17,7 @@ void shortRes(instruction* instr_ptr);
 int pathRes(instruction* instr_ptr);
 
 int pathRes2(char * tmp);
+void func(instruction * instr_ptr);
 
 void IOredirection(instruction * instr_ptr)
 {
@@ -521,4 +522,67 @@ int pathRes2(char * tmp)
     return 0;
 }
 
-
+void func(instruction * instr_ptr)
+{
+    int a;
+    int check = 0; // 1 ==> execute, 2 ==> I/O, 3 ==> piping, 4 ==> builtins
+    int bGround = 0;
+    
+    shortRes(instr_ptr);
+    enVar(instr_ptr);
+ 
+    for(a = 0; a < instr_ptr->numTokens; a++)
+    {
+        if(strcmp((instr_ptr->tokens)[a], "<") == 0 || strcmp((instr_ptr->tokens)[a], ">") == 0)
+            check = 2;
+        else if(strcmp((instr_ptr->tokens)[a], "|") == 0)
+            check = 3;
+        else if(strcmp((instr_ptr->tokens)[a], "cd") != 0 && strcmp((instr_ptr->tokens)[a], "exit") != 0
+                && strcmp((instr_ptr->tokens)[a], "jobs") != 0 && strcmp((instr_ptr->tokens)[a], "echo") != 0)
+            check = 4;
+        else if(check != 2 && check != 3 && check != 4)
+            check = 1;
+        
+        if(strcmp((instr_ptr->tokens)[a], "&") == 0)
+           bGround = 1;
+    }
+ 
+    if(pathRes(instr_ptr) == 1 && check == 1) // check if no '>', '<', or ,'|' in any token
+    {
+        if(bGround == 1) // & is in
+        {
+ 
+        }
+        else
+        {
+          
+        }
+    }
+    else if(pathRes(instr_ptr) == 1 && check == 2) // check for '<', '>' to perform i/o
+    {
+        if(bGround == 1) // & is in
+        {
+            
+        }
+        else
+        {
+            
+        }
+    }
+    else if(check == 3) // check for '|' to perform piping
+    {
+        if(bGround == 1) // & is in
+        {
+ 
+        }
+        else
+        {
+            
+        }
+    }
+    else if(check == 4) // check for builtins
+    {
+ 
+    }
+ 
+}
