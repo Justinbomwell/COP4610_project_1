@@ -573,14 +573,7 @@ void func(instruction * instr_ptr)
     }
     else if(pathRes(instr_ptr) == 1 && check == 2) // check for '<', '>' to perform i/o
     {
-        if(bGround == 1) // & is in
-        {
-            
-        }
-        else
-        {
-            
-        }
+	my_execute((instr_ptr->tokens), pathRes(instr->ptr));
     }
     else if(check == 3) // check for '|' to perform piping
     {
