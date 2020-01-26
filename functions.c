@@ -544,7 +544,20 @@ void func(instruction * instr_ptr)
             check = 1;
         
         if(strcmp((instr_ptr->tokens)[a], "&") == 0)
-           bGround = 1;
+	{	
+		if ((strcmp((instr_ptr->tokens)[0], "&") == 0))		//case 1: & is before the instructions and is ignored 
+		{
+			//ignore 
+		}
+		if ((a != 0)  && ((instr_ptr->tokens)[a+1] != NULL))		//case 2: & is in the middle and the syntax is invalid 
+		{
+			printf("%s\n", "Invalid Syntax");
+		}
+		else if ((instr_ptr->tokens)[a+1] == NULL)	//case 3: & is at the end of instructions and backgroudn processing happends 
+		{
+			bGround = 1;
+		}
+	}
     }
  
     if(pathRes(instr_ptr) == 1 && check == 1) // check if no '>', '<', or ,'|' in any token
