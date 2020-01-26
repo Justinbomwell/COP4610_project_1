@@ -206,9 +206,9 @@ void doublepipe(instruction * instr_ptr, int bGround)
                 close(4);
                 close(5);
                 close(6);
-                waitpid(0);
-                waitpid(0);
-                waitpid(0);
+               // waitpid(0);
+               // waitpid(0);
+               // waitpid(0);
                 
             }
             else             //child #3
