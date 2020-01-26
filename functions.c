@@ -6,9 +6,10 @@
 #include <fcntl.h>
 #include <sys/stat.h>
 
-void IOredirection(char* inputfile, char* outputfile, bool input, bool output, char**function);
-void singlepipes(char * cmd1, char *cmd2, int numofpipes);
-void doublepipe(char ** cmd1, char ** cmd2, char ** cmd3);
+void IOredirection(instruction * instr_ptr);
+void singlepipe(instruction * instr_ptr);
+void doublepipe(instruction * instr_ptr);
+
 
 void enVar(instruction* instr_ptr);
 void printPrompt();
@@ -17,8 +18,36 @@ int pathRes(instruction* instr_ptr);
 
 int pathRes2(char * tmp);
 
-void IOredirection(char* inputfile, char* outputfile, bool input, bool output, char ** function)
+void IOredirection(instruction * instr_ptr)
 {
+
+    char * inputfile; 
+    char * outputfile; 
+    bool input = false; 
+    bool output = false; 
+    char * cmd;
+
+    strcpy(cmd, (instr_ptr->tokens)[i]);
+
+    int i;
+    for (i = 0; i < instr_ptr->numTokens; i++) 
+    {
+        if ((instr_ptr->tokens)[i] != NULL)
+        {
+
+            if ((instr_ptr->tokens)[i] == "<")
+            {
+                input = true; 
+                strcpy(inputfile, (instr_ptr->tokens)[i+1]);
+            }
+            if ((instr_ptr->tokens)[i] == ">")
+            {
+                output = true; 
+                strcpy(outputfile, (instr_ptr->tokens)[i+1]);
+            }
+        }
+
+    }
     //bool input and output are for if there is input and output redirection needed
     
     //fd is file descriptor
@@ -36,7 +65,6 @@ void IOredirection(char* inputfile, char* outputfile, bool input, bool output, c
         {
             int fd =  open(inputfile, O_RDONLY);
             
-            
             if (fd == -1)            //will return -1 if file can't be opened
             {
                 printf("Error. Cannot open filename: %s\n", inputfile);
@@ -47,9 +75,6 @@ void IOredirection(char* inputfile, char* outputfile, bool input, bool output, c
                 dup2(fd, STDIN_FILENO);
                 close(fd);
             }
-            
-            //printf("testing 3 \n");
-            
         }
         
         
@@ -59,7 +84,6 @@ void IOredirection(char* inputfile, char* outputfile, bool input, bool output, c
             //    printf("testing 4 \n");
             int fd2 = open(outputfile, O_CREAT|O_WRONLY|O_TRUNC);         //WHAT DOES TRUNC do
             
-            
             if (fd2 == -1)
             {
                 printf("Error. Cannot open filename: %s\n", outputfile);
@@ -67,19 +91,12 @@ void IOredirection(char* inputfile, char* outputfile, bool input, bool output, c
             }
             else
             {
-                
-                //printf("testing 5 \n");
-                
-                dup2(fd2, STDOUT_FILENO);
-                
-                close (fd2);
-                
+
+                dup2(fd2, STDOUT_FILENO);             
+                close (fd2);  
             }
         }
-        //printf(" test \n");
-        
-        //f();
-        my_execute(function, 1);
+        my_execute(cmd, 1, 0, 1);
         exit(1);
         
         
@@ -95,8 +112,21 @@ void IOredirection(char* inputfile, char* outputfile, bool input, bool output, c
 }//end of function
 
 
-void singlepipe(char ** cmd1, char ** cmd2)
+void singlepipe(instruction * instr_ptr)
 {
+	char ** cmd1; 
+	chat ** cmd2; 
+	int i;
+    for (i = 0; i < instr_ptr->numTokens; i++) {
+        if ((instr_ptr->tokens)[i] != NULL)
+            if ((instr_ptr->tokens)[i] == "|")
+            {
+                strcpy(cmd1, (instr_ptr->tokens)[i-1]);
+                strcpy(cmd2, (instr_ptr->tokens)[i+1]);
+            }
+    }
+
+
     int fd[2];
     pipe(fd);
     pid_t p1 = fork();
@@ -106,7 +136,7 @@ void singlepipe(char ** cmd1, char ** cmd2)
         close (fd[0]);
         dup2(fd[1], STDOUT_FILENO);
         close(fd[1]);
-        my_execute(cmd1, 1);
+        my_execute(cmd1, 1, 1, 0);
     }
     else                 //parent
     {
@@ -116,7 +146,7 @@ void singlepipe(char ** cmd1, char ** cmd2)
             close(fd[1]);
             dup2(fd[0], STDIN_FILENO);
             close(fd[0]);
-            my_execute(cmd1, 1);
+            my_execute(cmd2, 1, 1, 0);
         }
         
         else         //parent executing
@@ -130,8 +160,26 @@ void singlepipe(char ** cmd1, char ** cmd2)
     
 }//end of single pipe
 
-void doublepipe(char ** cmd1, char ** cmd2, char ** cmd3)
+void doublepipe(instruction * instr_ptr)
 {
+
+	int i; 
+	int x = 0; 
+    for (i = 0; i < instr_ptr->numTokens; i++) {
+        if ((instr_ptr->tokens)[i] != NULL)
+            if ((instr_ptr->tokens)[i] == "|")
+            {
+            	x = 1; 
+                strcpy(cmd1, (instr_ptr->tokens)[i-1]);
+                strcpy(cmd2, (instr_ptr->tokens)[i+1]);
+            }
+            if (((instr_ptr->tokens)[i] == "|") && x == 1)
+            {
+            	strcpy(cmd3, (instr_ptr->tokens)[i+1]);
+
+            }
+    }
+
     int fd1[2];
     int fd2[2];
     
@@ -162,19 +210,20 @@ void doublepipe(char ** cmd1, char ** cmd2, char ** cmd3)
                 close(0);
                 dup(5);
                 close(3); close(4); close(5); close(6);
-                my_execute(cmd3, 1);
+                my_execute(cmd3, 1, 1, 0);
             }
         }
         else             //child #2
         {
             close(0); dup(3); close(1); dup(6); close(3); close(4); close(5);
-            my_execute(cmd2, 1);
+            my_execute(cmd2, 1, 1, 0);
         }
         
     }
     else                //child #1
     {
         close(1); dup(4); close(3); close(4); close(5); close(6);
+        my_execute(cmd1, 1, 1, 0); 
     }
     
     
