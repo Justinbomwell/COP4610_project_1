@@ -10,7 +10,6 @@ void enVar(instruction* instr_ptr);
 void printPrompt();
 void shortRes(instruction* instr_ptr); 
 int pathRes(instruction* instr_ptr);
-
 int pathRes2(char * tmp);
 void func(instruction * instr_ptr);
 
@@ -332,9 +331,12 @@ void func(instruction * instr_ptr)
         
         if(strcmp((instr_ptr->tokens)[a], "&") == 0)
 	{	
-		if ((strcmp((instr_ptr->tokens)[0], "&") == 0))		//case 1: & is before the instructions and is ignored 
+		if (strcmp((instr_ptr->tokens)[0], "&") == 0 && instr_ptr->numToken-1 > 2)		//case 1: & is before the instructions and is ignored 
 		{
-			//ignore 
+			for(b = 0; b < instr->numTokens; b++)
+				(instr_ptr->tokens)[b] = (instr_ptr->tokens)[b+1];
+			
+			(instr_ptr->tokens)[numTokens-2] = NULL;
 		}
 		if ((a != 0)  && ((instr_ptr->tokens)[a+1] != NULL))		//case 2: & is in the middle and the syntax is invalid 
 		{
