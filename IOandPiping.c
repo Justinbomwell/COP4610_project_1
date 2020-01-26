@@ -6,12 +6,13 @@
 #include <fcntl.h>
 #include <sys/stat.h>
 
-void IOredirection(instruction * instr_ptr, int bGround);
-void singlepipe(instruction * instr_ptr, int bGround);
-void doublepipe(instruction * instr_ptr, int bGround);
+
+void IOredirection( instruction* instr_ptr, int bGround);
+void singlepipe( instruction* instr_ptr, int bGround);
+void doublepipe( instruction* instr_ptr, int bGround);
 
 
-void IOredirection(instruction * instr_ptr, int bGround)
+void IOredirection( instruction* instr_ptr, int bGround)
 {
 
     char * inputfile; 
@@ -20,7 +21,7 @@ void IOredirection(instruction * instr_ptr, int bGround)
     bool output = false; 
     char * cmd;
 
-    strcpy(cmd, (instr_ptr->tokens)[i]);
+    strcpy(cmd, (instr_ptr->tokens)[0]);
 
     int i;
     for (i = 0; i < instr_ptr->numTokens; i++) 
@@ -28,12 +29,12 @@ void IOredirection(instruction * instr_ptr, int bGround)
         if ((instr_ptr->tokens)[i] != NULL)
         {
 
-            if ((instr_ptr->tokens)[i] == "<")
+            if (strcmp((instr_ptr->tokens)[i],"<") == 0)
             {
                 input = true; 
                 strcpy(inputfile, (instr_ptr->tokens)[i+1]);
             }
-            if ((instr_ptr->tokens)[i] == ">")
+            if (strcmp((instr_ptr->tokens)[i],">") == 0)
             {
                 output = true; 
                 strcpy(outputfile, (instr_ptr->tokens)[i+1]);
@@ -107,16 +108,18 @@ void IOredirection(instruction * instr_ptr, int bGround)
 
 void singlepipe(instruction * instr_ptr, int bGround)
 {
-	char ** cmd1; 
-	chat ** cmd2; 
+	char * cmd1; 
+	char * cmd2; 
 	int i;
     for (i = 0; i < instr_ptr->numTokens; i++) {
         if ((instr_ptr->tokens)[i] != NULL)
-            if ((instr_ptr->tokens)[i] == "|")
+        {
+            if (strcmp((instr_ptr->tokens)[i],"|") == 0)
             {
                 strcpy(cmd1, (instr_ptr->tokens)[i-1]);
                 strcpy(cmd2, (instr_ptr->tokens)[i+1]);
             }
+        }
     }
 
 
@@ -155,18 +158,20 @@ void singlepipe(instruction * instr_ptr, int bGround)
 
 void doublepipe(instruction * instr_ptr, int bGround)
 {
-
+    char * cmd1; 
+    char * cmd2; 
+    char * cmd3; 
 	int i; 
 	int x = 0; 
     for (i = 0; i < instr_ptr->numTokens; i++) {
         if ((instr_ptr->tokens)[i] != NULL)
-            if ((instr_ptr->tokens)[i] == "|")
+            if (strcmp((instr_ptr->tokens)[i],"|") == 0)
             {
             	x = 1; 
                 strcpy(cmd1, (instr_ptr->tokens)[i-1]);
                 strcpy(cmd2, (instr_ptr->tokens)[i+1]);
             }
-            if (((instr_ptr->tokens)[i] == "|") && x == 1)
+            if ((strcmp((instr_ptr->tokens)[i],"<") == 0) && x == 1)
             {
             	strcpy(cmd3, (instr_ptr->tokens)[i+1]);
 
