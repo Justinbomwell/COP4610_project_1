@@ -101,7 +101,7 @@ void IOredirection( instruction* instr_ptr, int bGround)
     
     else	//parent function 
     {
-        waitpid(0);
+        //waitpid(0);
         
     }
     
@@ -152,8 +152,8 @@ void singlepipe(instruction * instr_ptr, int bGround)
         
         else         //parent executing
         {
-            waitpid(0);
-            waitpid(0);
+           // waitpid(0);
+           // waitpid(0);
         }
         
     }
