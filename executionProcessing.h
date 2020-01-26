@@ -60,7 +60,7 @@ void printProcessStart(const struct ProcessElement *p, int pos);
  */
 
 char* PathEnvBuildPath(char* str);
-void my_execute(char **cmd, int isValid, int pipes, int fileRedirects);
+void my_execute(char **cmd, int isValid, int background);//, int pipes, int fileRedirects);
 void my_executeNormal(char **cmd, int background);
 char** my_executePipes(char **cmd, int background, int symbol);
 char** my_executeInput(char **cmd, int background, int symbol);
@@ -89,6 +89,7 @@ void jobs(const struct ProcessElement *p, int pos);
 void freedom(char **theArray);
 int contains(char** cmd, const char* theString);
 int countOf(char** cmd, const char* theString);
+char** deleteArrayElement(char** argv, int index);
 
 
 #endif //PROJECT_1_MYSHELL_SHORTCUTANDPROCESSRESOLUTION_H
