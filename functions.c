@@ -10,6 +10,7 @@ void enVar(instruction* instr_ptr);
 void printPrompt();
 void shortRes(instruction* instr_ptr); 
 int pathRes(instruction* instr_ptr);
+
 int pathRes2(char * tmp);
 void func(instruction * instr_ptr);
 
@@ -326,17 +327,14 @@ void func(instruction * instr_ptr)
         else if(strcmp((instr_ptr->tokens)[a], "cd") != 0 && strcmp((instr_ptr->tokens)[a], "exit") != 0
                 && strcmp((instr_ptr->tokens)[a], "jobs") != 0 && strcmp((instr_ptr->tokens)[a], "echo") != 0)
 	{	check = 4;	break;	}
-        else	(check != 2 && check != 3 && check != 4)
+        else if	(check != 2 && check != 3 && check != 4)
 	{	 check = 1;	}
         
         if(strcmp((instr_ptr->tokens)[a], "&") == 0)
 	{	
-		if (strcmp((instr_ptr->tokens)[0], "&") == 0 && instr_ptr->numToken-1 > 2)		//case 1: & is before the instructions and is ignored 
+		if ((strcmp((instr_ptr->tokens)[0], "&") == 0))		//case 1: & is before the instructions and is ignored 
 		{
-			for(b = 0; b < instr->numTokens; b++)
-				(instr_ptr->tokens)[b] = (instr_ptr->tokens)[b+1];
-			
-			(instr_ptr->tokens)[numTokens-2] = NULL;
+			//ignore 
 		}
 		if ((a != 0)  && ((instr_ptr->tokens)[a+1] != NULL))		//case 2: & is in the middle and the syntax is invalid 
 		{
@@ -355,6 +353,7 @@ void func(instruction * instr_ptr)
     }
     else if(pathRes(instr_ptr) == 1 && check == 2) // check for '<', '>' to perform i/o
     {
+        int i; 
 	 for (i = 0; i < instr_ptr->numTokens; i++) 
     	{
        	 	if ((instr_ptr->tokens)[i] != NULL)
@@ -379,7 +378,7 @@ void func(instruction * instr_ptr)
 			printf("%s\n", "Invalid Syntax");
 				break; 	
 			}
-			else {valid = 1}; 
+			else {valid = 1; } 
 		
         	}
 
@@ -391,6 +390,7 @@ void func(instruction * instr_ptr)
     }
     else if(check == 3) // check for '|' to perform piping
     {
+        int i; 
         for (i = 0; i < instr_ptr->numTokens; i++) 
     	{
        	 	if ((instr_ptr->tokens)[i] != NULL)
@@ -411,7 +411,7 @@ void func(instruction * instr_ptr)
 				break; 	
 			}
 			
-			else {valid = 1}; 
+			else {valid = 1;}
 		
         	}
 
@@ -419,7 +419,7 @@ void func(instruction * instr_ptr)
 	    if (valid == 1)
 	    {
 		    if (numofpipes == 1)
-		    {  singlepipe(isntr_ptr, bGround);	}
+		    {  singlepipe(instr_ptr, bGround);	}
 		    if (numofpipes == 2)
 		    {	doublepipe(instr_ptr,bGround); }
 			    
