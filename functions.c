@@ -15,6 +15,8 @@ void printPrompt();
 void shortRes(instruction* instr_ptr); 
 int pathRes(instruction* instr_ptr);
 
+int pathRes2(char * tmp);
+
 void IOredirection(char* inputfile, char* outputfile, bool input, bool output, char ** function)
 {
     //bool input and output are for if there is input and output redirection needed
@@ -427,4 +429,47 @@ int pathRes(instruction* instr_ptr)
     
     return 0;
 }
+
+int pathRes2(char * tmp)
+{
+    int a;
+    
+    char * path1;
+    char * delim;
+    char * t1;
+    
+    path1 = (char *) calloc(strlen(getenv("PATH")), sizeof(char));
+    strcpy(path1, getenv("PATH"));
+    
+    delim = strtok(path1, ":");
+    
+    while(delim != NULL)
+    {
+        t1 = (char *) calloc(strlen(delim)+strlen(tmp)+1, sizeof(char));
+        strcat(t1, delim);
+        strcat(t1, "/");
+        strcat(t1, tmp);
+        
+        if(access(t1, F_OK) != -1)
+        {
+            *tmp = (char *) calloc(strlen(t1), sizeof(char));
+            strcpy(tmp, t1);
+            
+            printf("%s\n", tmp);
+            
+            if(t1 != NULL) free(t1);
+            if(path1 != NULL) free(path1);
+            
+            return 1;
+        }
+        
+        delim = strtok(NULL, ":");
+    }
+    
+    if(path1 != NULL) free(path1);
+    if(t1 != NULL) free(t1);
+    
+    return 0;
+}
+
 
