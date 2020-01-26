@@ -311,12 +311,17 @@ void func(instruction * instr_ptr)
     int a;
     int check = 0; // 1 ==> execute, 2 ==> I/O, 3 ==> piping, 4 ==> builtins
     int bGround = 0;
+	int valid = 0; 
+	int numofpipes = 0; 
     
     shortRes(instr_ptr);
     enVar(instr_ptr);
  
     for(a = 0; a < instr_ptr->numTokens; a++)
     {
+	    valid = 0; 
+	    numofpipes = 0; 
+	    
         if(strcmp((instr_ptr->tokens)[a], "<") == 0 || strcmp((instr_ptr->tokens)[a], ">") == 0)
 	{	check = 2;	break;	}
         else if(strcmp((instr_ptr->tokens)[a], "|") == 0)
@@ -346,33 +351,83 @@ void func(instruction * instr_ptr)
  
     if(pathRes(instr_ptr) == 1 && check == 1) // check if no '>', '<', or ,'|' in any token
     {
-        if(bGround == 1) // & is in
-        {
- 		my_execute(instr_ptr, 1, 1);
-        }
-        else
-        {
-          	my_execute(instr_ptr, 1, 0);
-        }
+ 		my_execute(instr_ptr, 1, bGround);
     }
     else if(pathRes(instr_ptr) == 1 && check == 2) // check for '<', '>' to perform i/o
     {
-	
+	 for (i = 0; i < instr_ptr->numTokens; i++) 
+    	{
+       	 	if ((instr_ptr->tokens)[i] != NULL)
+		{
+			if (((instr_ptr->tokens)[i] == "<") && (i == 0))
+			{
+			printf("%s\n", "Invalid Syntax");
+				break; 
+			}
+			else if (((instr_ptr->tokens)[i] == ">") && (i == 0))
+			{
+			printf("%s\n", "Invalid Syntax");
+				break; 				
+			}
+			else if (((instr_ptr->tokens)[i] == "<") && ((instr_ptr->tokens)[i+1] == NULL))
+			{
+			printf("%s\n", "Invalid Syntax");
+				break; 	
+			}
+			else if (((instr_ptr->tokens)[i] == ">") && ((instr_ptr->tokens)[i+1] == NULL))
+			{
+			printf("%s\n", "Invalid Syntax");
+				break; 	
+			}
+			else {valid = 1}; 
+		
+        	}
+
+    	}// end of for loop 
+	    if (valid == 1)
+	    {
+		    IOredirection(instr_ptr, bGround); 
+	    }
     }
     else if(check == 3) // check for '|' to perform piping
     {
-        if(bGround == 1) // & is in
-        {
- 		
-        }
-        else
-        {
-            	
-        }
+        for (i = 0; i < instr_ptr->numTokens; i++) 
+    	{
+       	 	if ((instr_ptr->tokens)[i] != NULL)
+		{
+			if ((instr_ptr->tokens)[i] == "|")
+			{
+				numofpipes++; 
+			}
+			
+			if (((instr_ptr->tokens)[i] == "|") && (i == 0))
+			{
+			printf("%s\n", "Invalid Syntax");
+				break; 
+			}
+			else if (((instr_ptr->tokens)[i] == "<") && ((instr_ptr->tokens)[i+1] == NULL))
+			{
+			printf("%s\n", "Invalid Syntax");
+				break; 	
+			}
+			
+			else {valid = 1}; 
+		
+        	}
+
+    	}// end of for loop 
+	    if (valid == 1)
+	    {
+		    if (numofpipes == 1)
+		    {  singlepipe(isntr_ptr, bGround);	}
+		    if (numofpipes == 2)
+		    {	doublepipe(instr_ptr,bGround); }
+			    
+	    }
     }
     else if(check == 4) // check for builtins
     {
- 
+ 	
     }
  
 }
