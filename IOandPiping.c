@@ -163,9 +163,9 @@ void singlepipe(instruction * instr_ptr, int bGround)
 
 void doublepipe(instruction * instr_ptr, int bGround)
 {
-    char ** cmd1; 
-    char ** cmd2; 
-    char ** cmd3; 
+    char * cmd1[2]; 
+    char * cmd2[2]; 
+    char * cmd3[2]; 
      cmd[1] = NULL; 
     cmd[2] = NULL; 
     cmd[3] = NULL; 
