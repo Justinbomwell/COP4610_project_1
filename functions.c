@@ -318,14 +318,14 @@ void func(instruction * instr_ptr)
     for(a = 0; a < instr_ptr->numTokens; a++)
     {
         if(strcmp((instr_ptr->tokens)[a], "<") == 0 || strcmp((instr_ptr->tokens)[a], ">") == 0)
-            check = 2;
+	{	check = 2;	break;	}
         else if(strcmp((instr_ptr->tokens)[a], "|") == 0)
-            check = 3;
+	{	check = 3;	break;	}
         else if(strcmp((instr_ptr->tokens)[a], "cd") != 0 && strcmp((instr_ptr->tokens)[a], "exit") != 0
                 && strcmp((instr_ptr->tokens)[a], "jobs") != 0 && strcmp((instr_ptr->tokens)[a], "echo") != 0)
-            check = 4;
-        else if(check != 2 && check != 3 && check != 4)
-            check = 1;
+	{	check = 4;	break;	}
+        else	(check != 2 && check != 3 && check != 4)
+	{	 check = 1;	}
         
         if(strcmp((instr_ptr->tokens)[a], "&") == 0)
 	{	
