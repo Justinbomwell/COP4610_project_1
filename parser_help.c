@@ -13,6 +13,9 @@
 #include <stdbool.h>
 #include <fcntl.h>
 #include <sys/stat.h>
+#include "IOandPiping.c"
+#include "executionProcessing.h"
+#include "functions.c"
 
 typedef struct
 {
