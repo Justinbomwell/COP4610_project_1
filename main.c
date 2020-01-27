@@ -97,7 +97,8 @@ int main() {
         
         addNull(&instr);
         	
-	
+	shortRes(&instr);
+	enVar(&instr);
 	
     func(&instr, commandCounter);
     printTokens(&instr);
@@ -729,9 +730,6 @@ void func(instruction * instr_ptr, int commandCounter)
     int bGround = 0;
     int valid = 0; 
     int numofpipes = 0; 
-
-    shortRes(&instr_ptr);
-    enVar(&instr_ptr);
   
     for(a = 0; a < instr_ptr->numTokens-1; a++)
     {
