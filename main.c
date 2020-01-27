@@ -34,11 +34,12 @@ void doublepipe( instruction* instr_ptr, int bGround);
 //FUNCTIONS FUNCTION CALLS
 void enVar(instruction* instr_ptr);
 void printPrompt();
-void shortRes(instruction* instr_ptr); 
+int shortRes(instruction* instr_ptr); 
 int pathRes(instruction* instr_ptr);
 int pathRes2(char * tmp);
 void func(instruction * instr_ptr,int commandCounter);
-
+int isFile(const char * path);
+int isDirectory(const char * path);
 
 
 int main() {
@@ -445,7 +446,7 @@ void enVar(instruction* instr_ptr)
 	}
 }
 
-void shortRes(instruction* instr_ptr)
+int shortRes(instruction* instr_ptr)
 {
     int a, b, c, d, e, f, g, h, i;
     int chk;
@@ -634,9 +635,17 @@ void shortRes(instruction* instr_ptr)
                 if(t3Check == 1) free(t3); t3 = NULL;
                 if(t4Check == 1) free(t4); t4 = NULL;
                 if(checkDelim == 1) free(delim); delim = NULL;
+            
+                if(isFile((instr_ptr->tokens)[a]) == 0 && isDirectory((instr_ptr->tokens)[a]) == 0)
+                    return 0;
+                
             }
+            
+            
         }
     }
+    
+    return 1;
 }
 
 int pathRes(instruction* instr_ptr)
@@ -896,4 +905,25 @@ void func(instruction * instr_ptr, int commandCounter)
     }*/
 
 }
+
+int isFile(const char * path)
+{
+    if(access(path, F_OK) == -1)
+        return 0;
+    
+    return 1;
+}
+
+int isDirectory(const char * path)
+{
+    struct stat stats;
+    
+    stat(path, &stats);
+    
+    if(S_ISDIR(stats.st_mode))
+        return 1;
+    
+    return 0;
+}
+
 
