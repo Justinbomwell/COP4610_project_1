@@ -13,7 +13,6 @@
     |  _/ '_/ _ \/ _/ -_|_-<_-< | ' \/ _` |
     |_| |_| \___/\__\___/__/__/_|_||_\__, |
                                      |___/
-
  */
 
 struct ProcessElement* pEntry[];
@@ -160,16 +159,6 @@ void printProcessStart(const struct ProcessElement *p, int pos)
     }
 }
 
-/*
-void printingFinished(const struct ProcessElement *p, int pos)
-{
-    if (p != NULL)
-    {
-        printf("[%i]+\t[%s]\n", pos, p->cmd);
-    }
-}
- */
-
 
 
 /*
@@ -177,162 +166,48 @@ void printingFinished(const struct ProcessElement *p, int pos)
  | __|_ _____ __ _  _| |_(_)___ _ _
  | _|\ \ / -_) _| || |  _| / _ \ ' \
  |___/_\_\___\__|\_,_|\__|_\___/_||_|
-
  */
 
-
-void my_execute(char **cmd, int isValid, int background)
+void my_execute(char **argument, int background, char* cmd)
 {
     int backgroundCheck = background;//contains(cmd, "&");
     /*int inputSymbol = contains(cmd, "<");
     int outputSymbol = contains(cmd, ">");
     int pipe_count = countOf(cmd, "|");*/
-    if(isValid == 1)
-    {
-        int status;
-        pid_t pid = fork();
-
-        if (pid == -1)
-        {
-            //Error
-            printf("Problem executing %s\n", cmd[0]);
-            exit(1);
-        }
-        else if (pid == 0)
-        {
-            //Child
-            execv(cmd[0], cmd);
-            //
-            exit(1);
-        }
-        else
-        {
-            if (backgroundCheck != 0)
-            {
-                waitpid(pid, &status, WNOHANG);
-                pushProcess(mkProcess(pid, -1, cmd));
-            }
-            else
-            {
-                //Parent
-                waitpid(pid, &status, 0);
-                //}
-            }
-        }
-        //my_executeNormal(cmd, backgroundCheck);
-    }
-    /*else if(isValid == 1 && pipes == 1)
-    {
-        my_executePipes(cmd, backgroundCheck);
-    }
-    else if(isValid == 1 && inputSymbol != -1)
-    {
-        my_executeInput(cmd, backgroundCheck);
-    }
-    else if(isValid == 1 && outputSymbol != -1)
-    {
-        my_executeOutput(cmd, backgroundCheck);
-    }*/
-    else
-    {
-        printf("Error: Path is not valid.");
-    }
-}
-
-/*void my_executeNormal(char **cmd, int background)
-{
     int status;
     pid_t pid = fork();
 
     if (pid == -1)
     {
         //Error
-        printf("Problem executing %s\n", cmd[0]);
+        printf("Fork Trouble");
         exit(1);
     }
     else if (pid == 0)
     {
         //Child
-        execv(cmd[0], cmd);
+        execv(argument[0], argument);
+        printf("Problem executing %s\n", argument[0]);
+
         //
         exit(1);
     }
     else
     {
-        if (background != -1)
+        if (backgroundCheck == 1)
         {
             waitpid(pid, &status, WNOHANG);
             pushProcess(mkProcess(pid, -1, cmd));
         }
         else
         {
-        //Parent
-        waitpid(pid, &status, 0);
-        //}
+            //Parent
+            waitpid(pid, &status, 0);
         }
     }
-}*/
-
-/*
-char** my_executePipes(char **cmd, int background)
-{
-    char* filename = (char*)calloc(strlen(cmd[I_loc+1])+1, sizeof(char));
-    strcpy(filename, cmd[I_loc+1]);
-
-    argv = ArrayRemoveElement(argv, I_loc);
-    argv = ArrayRemoveElement(argv, I_loc);
-
-    // update background iterator
-    background = VecContainsStr(argv, "&");
-    char* cmd = ArgvToString(argv);
-    if (background != -1)
-    {
-        argv = ArrayRemoveElement(argv, background);
-    }
-    IORedirect(argv, 1, filename, background, cmd);
-    free(filename);
-    free(cmd);
-
-    return argv;
+    //my_executeNormal(cmd, backgroundCheck);
 }
 
-char** my_executeInput(char **cmd, int background, int inputSymbol)
-{char* filename = (char*)calloc(strlen(cmd[inputSymbol+1])+1, sizeof(char));
-    strcpy(filename, cmd[inputSymbol+1]);
-
-    cmd = ArrayRemoveElement(cmd, inputSymbol);
-    cmd = ArrayRemoveElement(cmd, inputSymbol);
-
-    if (background != -1)
-    {
-        cmd = ArrayRemoveElement(cmd, background);
-    }
-    IORedirect(argv, 1, filename, background, cmd);
-    free(filename);
-    free(cmd);
-
-    return cmd;
-}
-
-char** my_executeOutput(char **cmd, int background, int outputSymbol)
-{
-    char* filename = (char*)calloc(strlen(cmd[outputSymbol+1])+1, sizeof(char));
-    strcpy(filename, cmd[outputSymbol+1]);
-
-    cmd = ArrayRemoveElement(cmd, outputSymbol);
-    cmd = ArrayRemoveElement(cmd, outputSymbol);
-
-    if (background != -1)
-    {
-        cmd = ArrayRemoveElement(cmd, background);
-    }
-    IORedirect(cmd, 0, filename, background, cmd);
-    free(filename);
-    free(cmd);
-
-    return cmd;
-}
- */
 
 /*
  ___      _ _ _     _
@@ -343,7 +218,6 @@ char** my_executeOutput(char **cmd, int background, int outputSymbol)
 
 void exitShell(char **cmd, int commandCounter)
 {
-
     exitCommandProcess();
     freedom(cmd);
     printf("\nExiting Now!\n    Commands Issued: %u", commandCounter);
@@ -383,7 +257,7 @@ void echo(char *string)
         }
         else
         {
-          printf("Error. command does not exist.");
+            printf("Error. command does not exist.");
         }
     }
 }
@@ -398,7 +272,7 @@ void jobs(const struct ProcessElement *p, int pos)//char* string)
         }
         else
         {
-            printf("[%i]+ [%i]\n", pos, p->pid_1);
+            printf("[%i]+ [%i] [%s]\n", pos, p->pid_1, p->cmd);
         }
     }
     //int CMDPosition, CMDPID;
@@ -425,3 +299,4 @@ void freedom(char **theArray)
     }
     free(theArray);
 }
+
