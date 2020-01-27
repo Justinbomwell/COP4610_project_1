@@ -1,19 +1,3 @@
-//
-// Created by Scott Forn on 1/26/20.
-//
-/*
-#ifndef SHELLTEST_INSTRUCTIONHEADER_H
-#define SHELLTEST_INSTRUCTIONHEADER_H
-
-typedef struct
-{
-    char** tokens;
-    int numTokens;
-} instruction;
-
-#endif //SHELLTEST_INSTRUCTIONHEADER_H
-*/
-
 //COP4610
 //Project 1 Starter Code
 //example code for initial parsing
