@@ -96,11 +96,13 @@ int main() {
         
         addNull(&instr);
         	
-	func(&instr);
 	
-	printTokens(&instr);
+	
+    func(&instr);
+    printTokens(&instr);
+
         
-        clearInstruction(&instr);
+    clearInstruction(&instr);
     }
     
     return 0;
@@ -165,31 +167,43 @@ void IOredirection( instruction* instr_ptr, int bGround)
     char * outputfile; 
     bool input = false; 
     bool output = false; 
-    char * cmd[2];
 
+    int outCheck;
+    //char * cmd[2];
 
-    strcpy(cmd[0], (instr_ptr->tokens)[0]);
-    cmd[1] = NULL; 
-
+    //strcpy(cmd[0], (instr_ptr->tokens)[0]);
+   // cmd[1] = NULL; 
+   // printf("Test 6.7\n");
     int i;
-    for (i = 0; i < instr_ptr->numTokens; i++) 
+          //  printf("Print function round 2:  \n");
+
+       // printTokens(&instr);
+
+    for (i = 0; i < instr_ptr->numTokens-1; i++) 
     {
+        //printf(" current token is : %s \n", (instr_ptr->tokens)[i]);
+
         if ((instr_ptr->tokens)[i] != NULL)
         {
+
 
             if (strcmp((instr_ptr->tokens)[i],"<") == 0)
             {
                 input = true; 
+                inputfile = (char *) calloc(strlen((instr_ptr->tokens)[i+1]), sizeof(char));
                 strcpy(inputfile, (instr_ptr->tokens)[i+1]);
+
             }
             if (strcmp((instr_ptr->tokens)[i],">") == 0)
             {
                 output = true; 
+                outputfile = (char *) calloc(strlen((instr_ptr->tokens)[i+1]), sizeof(char));
                 strcpy(outputfile, (instr_ptr->tokens)[i+1]);
             }
         }
 
     }
+
     //bool input and output are for if there is input and output redirection needed
     
     //fd is file descriptor
@@ -198,14 +212,15 @@ void IOredirection( instruction* instr_ptr, int bGround)
     //output redirection
     
     
-    
     pid_t pid = fork();
     if (pid == 0)
     {
         
         if (input == true)
         {
+
             int fd =  open(inputfile, O_RDONLY);
+
             
             if (fd == -1)            //will return -1 if file can't be opened
             {
@@ -213,7 +228,6 @@ void IOredirection( instruction* instr_ptr, int bGround)
             }
             else                 //returns positive number if opened properly
             {
-                printf("testing 2 \n");
                 dup2(fd, STDIN_FILENO);
                 close(fd);
             }
@@ -238,7 +252,7 @@ void IOredirection( instruction* instr_ptr, int bGround)
                 close (fd2);  
             }
         }
-        my_execute(cmd, 1, bGround);
+        my_execute(instr_ptr->tokens, 1, bGround);
         exit(1);
         
         
@@ -249,6 +263,9 @@ void IOredirection( instruction* instr_ptr, int bGround)
     {
         //waitpid(0);
     }
+
+    if (input == true)  {   free(inputfile); }
+    if (output == true) {   free (outputfile); }
     
 }//end of function
 
@@ -713,72 +730,89 @@ void func(instruction * instr_ptr)
     shortRes(&instr_ptr);
     enVar(&instr_ptr);
   
-    for(a = 0; a < instr_ptr->numTokens; a++)
+    for(a = 0; a < instr_ptr->numTokens-1; a++)
     {
+
+       // if (strcmp((instr_ptr->tokens)[a], NULL) == 0) break;
+        //if (instr_ptr->numTokens == 1) break; 
 	    
         if(strcmp((instr_ptr->tokens)[a], "<") == 0 || strcmp((instr_ptr->tokens)[a], ">") == 0)
-	{	check = 2;	break;	}
+	   {	check = 2;	break;	}
         else if(strcmp((instr_ptr->tokens)[a], "|") == 0)
-	{	check = 3;	break;	}
-        else if(strcmp((instr_ptr->tokens)[a], "cd") != 0 && strcmp((instr_ptr->tokens)[a], "exit") != 0
-                && strcmp((instr_ptr->tokens)[a], "jobs") != 0 && strcmp((instr_ptr->tokens)[a], "echo") != 0)
-	{	check = 4;	break;	}
+	   {	check = 3;	break;	}
+        else if(strcmp((instr_ptr->tokens)[a], "cd") == 0 || strcmp((instr_ptr->tokens)[a], "exit") == 0
+                && strcmp((instr_ptr->tokens)[a], "jobs") == 0 || strcmp((instr_ptr->tokens)[a], "echo") == 0)
+	   {	check = 4;	break;	}
         else if	(check != 2 && check != 3 && check != 4)
-	{	check = 1;	}
+	   {	check = 1;	}
         
-        if(strcmp((instr_ptr->tokens)[a], "&") == 0)
+        
+    if(strcmp((instr_ptr->tokens)[a], "&") == 0)
 	{	
-		if ((strcmp((instr_ptr->tokens)[0], "&") == 0))		//case 1: & is before the instructions and is ignored 
+
+		if (a == 0)		//case 1: "&"" is before the instructions and is ignored 
 		{
+
 			//ignore 
 		}
 		if ((a != 0)  && ((instr_ptr->tokens)[a+1] != NULL))		//case 2: & is in the middle and the syntax is invalid 
 		{
+
 			printf("%s\n", "Invalid Syntax");
 		}
 		else if ((instr_ptr->tokens)[a+1] == NULL)	//case 3: & is at the end of instructions and backgroudn processing happends 
-		{
+		{        
+
 			bGround = 1;
 		}
+
 	}
-    }
- 
+
+
+    }//end of for loop 
+    
     if(pathRes(instr_ptr) == 1 && check == 1) // check if no '>', '<', or ,'|' in any token
     {
- 		my_execute(instr_ptr, 1, bGround);
+ 		my_execute(instr_ptr->tokens, 1, bGround);
     }
     else if(pathRes(instr_ptr) == 1 && check == 2) // check for '<', '>' to perform i/o
     {
         int i; 
-	 for (i = 0; i < instr_ptr->numTokens; i++) 
+	 for (i = 0; i < instr_ptr->numTokens-1; i++) 
     	{
        	 	if ((instr_ptr->tokens)[i] != NULL)
+
 		{
-			if (((instr_ptr->tokens)[i] == "<") && (i == 0))
+			if ((strcmp((instr_ptr->tokens)[i], "<") == 0) && (i == 0))
 			{
 			printf("%s\n", "Invalid Syntax");
 				break; 
 			}
-			else if (((instr_ptr->tokens)[i] == ">") && (i == 0))
+			else if ((strcmp((instr_ptr->tokens)[i], ">") == 0) && (i == 0))
 			{
 			printf("%s\n", "Invalid Syntax");
 				break; 				
 			}
-			else if (((instr_ptr->tokens)[i] == "<") && ((instr_ptr->tokens)[i+1] == NULL))
+			//else if ((strcmp((instr_ptr->tokens)[i], "<")== 0) && (strcmp((instr_ptr->tokens)[i+1], NULL) == 0))
+            else if ((strcmp((instr_ptr->tokens)[i], "<")== 0) && (i == (instr_ptr->numTokens-1)))
 			{
 			printf("%s\n", "Invalid Syntax");
 				break; 	
 			}
-			else if (((instr_ptr->tokens)[i] == ">") && ((instr_ptr->tokens)[i+1] == NULL))
+			//else if ((strcmp((instr_ptr->tokens)[i], ">")== 0) && (strcmp((instr_ptr->tokens)[i+1], NULL) == 0))
+            else if ((strcmp((instr_ptr->tokens)[i], ">")== 0) && (i == (instr_ptr->numTokens-1)))
+
 			{
 			printf("%s\n", "Invalid Syntax");
 				break; 	
 			}
 			else {valid = 1; } 
 		
-        	}
+        }
+
 
     	}// end of for loop 
+
 	    if (valid == 1)
 	    {
 		    IOredirection(instr_ptr, bGround); 
