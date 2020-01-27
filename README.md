@@ -12,7 +12,7 @@ Team Members and Responsibilities:
   Justin Bomwell:
   • I/O Redirection
   • Pipes
-  • Implementation of all functions in main (func())
+  • Implementation of all functions in main using func()
 
   
   Scott Forn:
