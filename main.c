@@ -98,10 +98,16 @@ int main() {
         
         addNull(&instr);
         	
-	shortRes(&instr);
-	enVar(&instr);
-	
-    func(&instr, commandCounter);
+        if(shortRes(&instr) == 0)
+        {
+            printf("Invalid Directory or File Entered\n");
+        }
+        else
+        {
+            enVar(&instr);
+            func(&instr, commandCounter);
+        }
+        
     printTokens(&instr);
     commandCounter++; 
         
