@@ -747,7 +747,14 @@ void func(instruction * instr_ptr, int commandCounter)
         {    exitShell(instr_ptr, commandCounter); break;   }
 
         else if(strcmp((instr_ptr->tokens)[a], "jobs") == 0)
-        {    check = 5;  break;  }
+        {    int i = 0;
+            while(pEntry[i] != NULL)
+            {
+                jobs(pEntry, i);
+                i++;
+            }  
+	 break;
+	}
 
         else if(strcmp((instr_ptr->tokens)[a], "cd") == 0)
         {    changeDirectory(instr_ptr->tokens[1]); break;   }
