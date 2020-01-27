@@ -26,7 +26,6 @@
     |  _/ '_/ _ \/ _/ -_|_-<_-< | ' \/ _` |
     |_| |_| \___/\__\___/__/__/_|_||_\__, |
                                      |___/
-
  */
 
 struct ProcessElement
@@ -56,11 +55,10 @@ void printProcessStart(const struct ProcessElement *p, int pos);
  | __|_ _____ __ _  _| |_(_)___ _ _
  | _|\ \ / -_) _| || |  _| / _ \ ' \
  |___/_\_\___\__|\_,_|\__|_\___/_||_|
-
  */
 
 char* PathEnvBuildPath(char* str);
-void my_execute(char **cmd, int isValid, int background);//, int pipes, int fileRedirects);
+void my_execute(char **argument, int background, char* cmd);//, int pipes, int fileRedirects);
 void my_executeNormal(char **cmd, int background);
 char** my_executePipes(char **cmd, int background, int symbol);
 char** my_executeInput(char **cmd, int background, int symbol);
@@ -71,7 +69,6 @@ char* DeleteCharacter(char* line, size_t start, size_t end);
  | _ )_  _(_) | |_  (_)_ _  ___
  | _ \ || | | |  _| | | ' \(_-<
  |___/\_,_|_|_|\__| |_|_||_/__/
-
  */
 void exitShell(char **cmd, int commandCounter);
 void changeDirectory(const char* dir);
@@ -87,9 +84,7 @@ void jobs(const struct ProcessElement *p, int pos);
 */
 
 void freedom(char **theArray);
-int contains(char** cmd, const char* theString);
-int countOf(char** cmd, const char* theString);
-char** deleteArrayElement(char** argv, int index);
+char* toString(char** instr_ptr);
 
 
 #endif //PROJECT_1_MYSHELL_SHORTCUTANDPROCESSRESOLUTION_H
