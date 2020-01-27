@@ -100,7 +100,7 @@ int main() {
 	
 	
     func(&instr, commandCounter);
-    //printTokens(&instr);
+    printTokens(&instr);
     commandCounter++; 
         
     clearInstruction(&instr);
@@ -646,35 +646,37 @@ int pathRes(instruction* instr_ptr)
 	char * delim;
 	char * t1;
 	
-	if(strcmp((instr_ptr->tokens)[0], "cd") != 0 && strcmp((instr_ptr->tokens)[0], "exit") != 0 
-	&& strcmp((instr_ptr->tokens)[0], "jobs") != 0 && strcmp((instr_ptr->tokens)[0], "echo") != 0) 
-	{
-		path1 = (char *) calloc(strlen(getenv("PATH")), sizeof(char));
-		strcpy(path1, getenv("PATH"));
+    for(a = 0; a <instr_ptr->numTokens; a++)
+    { 
+        if((instr_ptr->tokens)[a] != NULL && strpbrk((instr_ptr->tokens)[a], "/") == NULL && strcmp((instr_ptr->tokens)[a], "cd") != 0 && 
+            strcmp((instr_ptr->tokens)[a], "jobs") != 0 && strcmp((instr_ptr->tokens)[a], "exit") != 0 && strcmp((instr_ptr->tokens)[a], "echo") != 0) 
+	    {
+		  path1 = (char *) calloc(strlen(getenv("PATH")), sizeof(char));
+		  strcpy(path1, getenv("PATH"));
 
-		delim = strtok(path1, ":");
+		  delim = strtok(path1, ":");
 
-		while(delim != NULL)
-		{
-			t1 = (char *) calloc(strlen(delim)+strlen((instr_ptr->tokens)[0])+1, sizeof(char));	
-			strcat(t1, delim);
-			strcat(t1, "/");
-			strcat(t1, (instr_ptr->tokens)[0]);
+		  while(delim != NULL)
+		  {
+		      t1 = (char *) calloc(strlen(delim)+strlen((instr_ptr->tokens)[a])+1, sizeof(char));	
+		      strcat(t1, delim);
+		      strcat(t1, "/");
+		      strcat(t1, (instr_ptr->tokens)[a]);
             
-			if(access(t1, F_OK) != -1)
-			{
-        		        (instr_ptr->tokens)[0] = (char *) calloc(strlen(t1), sizeof(char));
-                		strcpy((instr_ptr->tokens)[0], t1);
-                		return 1;
-			}	
+		      if(access(t1, F_OK) != -1)
+			  {
+        		    (instr_ptr->tokens)[a] = (char *) calloc(strlen(t1), sizeof(char));
+                    strcpy((instr_ptr->tokens)[a], t1);
+                	return 1;
+		      }	
 			
-			delim = strtok(NULL, ":");
-		}
+		      delim = strtok(NULL, ":");
+		  }
         
-        if(path1 != NULL) free(path1);
-        if(t1 != NULL) free(t1);
-	}
-    
+          if(path1 != NULL) free(path1);
+          if(t1 != NULL) free(t1);
+	   }
+    }
     return 0;
 }
 
@@ -840,7 +842,7 @@ void func(instruction * instr_ptr, int commandCounter)
 		    IOredirection(instr_ptr, bGround); 
 	    }
     }
-    else if(check == 3) // check for '|' to perform piping
+    else if(pathRes(instr_ptr) == 1 && (check == 3)) // check for '|' to perform piping
     {
         int i; 
         for (i = 0; i < instr_ptr->numTokens; i++) 
