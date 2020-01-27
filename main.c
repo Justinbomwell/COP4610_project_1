@@ -34,12 +34,12 @@ void doublepipe( instruction* instr_ptr, int bGround);
 //FUNCTIONS FUNCTION CALLS
 void enVar(instruction* instr_ptr);
 void printPrompt();
-int shortRes(instruction* instr_ptr); 
+int shortRes(instruction* instr_ptr);
 int pathRes(instruction* instr_ptr);
-int pathRes2(char * tmp);
 void func(instruction * instr_ptr,int commandCounter);
 int isFile(const char * path);
 int isDirectory(const char * path);
+
 
 
 int main() {
@@ -97,7 +97,7 @@ int main() {
         } while ('\n' != getchar());    //until end of line is reached
         
         addNull(&instr);
-        	
+        
         if(shortRes(&instr) == 0)
         {
             printf("Invalid Directory or File Entered\n");
@@ -108,8 +108,8 @@ int main() {
             func(&instr, commandCounter);
         }
         
-    printTokens(&instr);
-    commandCounter++; 
+        printTokens(&instr);
+        commandCounter++;
         
     clearInstruction(&instr);
     }
@@ -177,7 +177,6 @@ void IOredirection( instruction* instr_ptr, int bGround)
     bool input = false; 
     bool output = false; 
 
-    int outCheck;
     //char * cmd[2];
 
     //strcpy(cmd[0], (instr_ptr->tokens)[0]);
@@ -454,16 +453,13 @@ void enVar(instruction* instr_ptr)
 
 int shortRes(instruction* instr_ptr)
 {
-    int a, b, c, d, e, f, g, h, i;
+    int a, c, d, e, f, g, h, i;
     int chk;
-    int last;
     int count = 0;
     int checkDelim = 0;
     int t2Check = 0;
     int t3Check = 0;
     int t4Check = 0;
-    
-    char * prevDir = getenv("PWD");
     
     char * t1 = NULL;
     char * t2 = NULL;
@@ -696,48 +692,6 @@ int pathRes(instruction* instr_ptr)
     return 0;
 }
 
-int pathRes2(char * tmp)
-{
-    int a;
-    
-    char * path1;
-    char * delim;
-    char * t1;
-    
-    path1 = (char *) calloc(strlen(getenv("PATH")), sizeof(char));
-    strcpy(path1, getenv("PATH"));
-    
-    delim = strtok(path1, ":");
-    
-    while(delim != NULL)
-    {
-        t1 = (char *) calloc(strlen(delim)+strlen(tmp)+1, sizeof(char));
-        strcat(t1, delim);
-        strcat(t1, "/");
-        strcat(t1, tmp);
-        
-        if(access(t1, F_OK) != -1)
-        {
-            *tmp = (char *) calloc(strlen(t1), sizeof(char));
-            strcpy(tmp, t1);
-            
-            printf("%s\n", tmp);
-            
-            if(t1 != NULL) free(t1);
-            if(path1 != NULL) free(path1);
-            
-            return 1;
-        }
-        
-        delim = strtok(NULL, ":");
-    }
-    
-    if(path1 != NULL) free(path1);
-    if(t1 != NULL) free(t1);
-    
-    return 0;
-}
-
 void func(instruction * instr_ptr, int commandCounter)
 {
     int a;
@@ -745,7 +699,7 @@ void func(instruction * instr_ptr, int commandCounter)
     int bGround = 0;
     int valid = 0; 
     int numofpipes = 0; 
-  
+
     for(a = 0; a < instr_ptr->numTokens-1; a++)
     {
 
@@ -862,17 +816,17 @@ void func(instruction * instr_ptr, int commandCounter)
     	{
        	 	if ((instr_ptr->tokens)[i] != NULL)
 		{
-			if ((instr_ptr->tokens)[i] == "|")
+			if (strcmp((instr_ptr->tokens)[i], "|") == 0)
 			{
 				numofpipes++; 
 			}
 			
-			if (((instr_ptr->tokens)[i] == "|") && (i == 0))
+			if ((strcmp((instr_ptr->tokens)[i], "|") == 0) && (i == 0))
 			{
-			printf("%s\n", "Invalid Syntax");
+                printf("%s\n", "Invalid Syntax");
 				break; 
 			}
-			else if (((instr_ptr->tokens)[i] == "<") && ((instr_ptr->tokens)[i+1] == NULL))
+			else if ((strcmp((instr_ptr->tokens)[i], "<") == 0) && ((instr_ptr->tokens)[i+1] == NULL))
 			{
 			printf("%s\n", "Invalid Syntax");
 				break; 	
@@ -931,5 +885,3 @@ int isDirectory(const char * path)
     
     return 0;
 }
-
-
