@@ -1,6 +1,5 @@
 # COP4610_project_1
 README
-Your README file will need to contain the following in a nicely formatted text file.
 
 Team Members and Responsibilities:
   Conrad Horn:
@@ -88,7 +87,8 @@ int isFile(const char * path)
 int isDirectory(const char * path)
 
 
-Known Bugs: 
+Known Bugs/Unfinished Portions: 
+-GUYS MAKE SURE TO INFORM THEM OF 1. WHEN IT HAPPENDS.  2. WHY IT HAPPENDS.  3.  HOW WE ATTEMPTED TO FIX IT
 1. 
 2.
 3.
@@ -98,6 +98,12 @@ Known Bugs:
 7.
 8.
 9.
+
+
+
+Special Considerations: 
+
+
 
 
 
