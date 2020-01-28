@@ -54,10 +54,6 @@ Compilation Instructions:
 
 Function Descriptions: 
 
-0. void example function (int x)
-
-  Example paragraph. Write your stuff here. Include what file to find your function on.  Also include when each file is called, its use, what it takes in and returns, and why you di each part. Try not to make multiple paragraphs and to keep everything within one indentation like i am doing here.  
-
 1. void addToken(instruction* instr_ptr, char* tok)
   - Take in struct instruction and c-string command from the command line
   - Make space for an additional token in the instruction
@@ -75,8 +71,18 @@ Function Descriptions:
   - After all of the commands are entered on the command line one last token is added to the instruction and set as NULL
 
 5. void IOredirection( instruction* instr_ptr, int bGround)
+  -This function takes in the instruction pointer, and an integer which will equal 1 if the command should be run in the background or 0 if the command should not 
+  -This function first parses through the tokens to determine which will be the input file and which will be the output file
+  -The fork function is called and in the child process redirects the input and output only if there are input and output files respectively 
+  -Then the my_execute function is called to run the command and the child process is exited.  
 
 6. void singlepipe( instruction* instr_ptr, int bGround)
+  -This function takes in the instruction pointer, and an integer which will equal 1 if the command should be run in the background or 0 if the command should not
+  -First this function copies the writing function and the reading function as tokens in the two instruction variables cmd1 and cmd2
+  -The program forks, the pipe function is called, and program forks again
+  -Inside the first child the input and output file descriptors are changed, the first function is executed, and the child process is terminated
+  -Again inside the seccond child the input and output file descriptors are changed, the seccond function is executed, and the child process is terminated
+  -The parent program then calls the wait function to wait for the child processes to finish
 
 7. void doublepipe( instruction* instr_ptr, int bGround)
 
@@ -126,6 +132,9 @@ Function Descriptions:
     - if all instruction tokens running through pathRes are a file then returns 1
     
 12. void func(instruction * instr_ptr,int commandCounter)
+  -This function looks at the parsed instructions and then decides if the next step is one of four possibilities: I/O redirection, piping, built ins, or regular execution
+  -After this the tokens are checked for the "&" symbol to indicate background processing 
+  -Then the appropriate functions are called depending on which of the four types of execution need to run  
 
 13. int isFile(const char * path)
   - Uses access to check if c-string passed in is a file
