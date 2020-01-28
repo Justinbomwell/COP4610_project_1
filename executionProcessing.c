@@ -17,7 +17,8 @@
 
 struct ProcessElement* pEntry[];
 
-void backgroundInit()
+//Initialize the background queue (size 256 for processing space)
+void backgroundInit() 
 {
     int i;
     for (i = 0; i < SIZEOFQUEUE; i++)
@@ -26,6 +27,7 @@ void backgroundInit()
     }
 }
 
+//Adds the newest backgrond command to the end of the list
 void pushProcess(struct ProcessElement *p)
 {
     int i;
@@ -35,6 +37,7 @@ void pushProcess(struct ProcessElement *p)
         if (pEntry[i] == NULL)
         {
             pEntry[i] = p;
+            //Prints the first process that's being executed.
             printProcessStart(pEntry[i], i);
             break;
         }
@@ -43,6 +46,7 @@ void pushProcess(struct ProcessElement *p)
 
 void rmProcess(int index)
 {
+    //Finds index inside of the queue.
     if (index >= 0 && index < SIZEOFQUEUE)
     {
         if (pEntry[index] != NULL)
@@ -51,14 +55,15 @@ void rmProcess(int index)
             {
                 printf("[%i]+\t[%s]\n", index, pEntry[index]->cmd);
             }
-            //printingFinished(pEntry[index], index);
+            //Call delete function
             deleteEntry(pEntry[index]);
+            //Null out pEntry
             pEntry[index] = NULL;
         }
     }
 }
 
-void checkQueue()
+void checkQueue()     //Checks the status of queue i.e. empty or not
 {
     int i;
     for (i = 0; i < SIZEOFQUEUE; i++)
@@ -73,22 +78,26 @@ void checkQueue()
     }
 }
 
+//Creates a new process
 struct ProcessElement* mkProcess(int pid_1, int pid_2, char *cmd)
 {
+    //Allocate memory and create a new element
     struct ProcessElement* newElement = (struct ProcessElement*)calloc(1, sizeof(struct ProcessElement));
-    newElement->pid_1 = pid_1;
-    newElement->pid_2 = pid_2;
-    newElement->cmd = (char*)calloc(strlen(cmd)+1,sizeof(char));
+    newElement->pid_1 = pid_1;    //Assign newElement data to data that was passed in.
+    newElement->pid_2 = pid_2;    //See above.
+    newElement->cmd = (char*)calloc(strlen(cmd)+1,sizeof(char));    //Memeory alloc
     strcpy(newElement->cmd, cmd);
     return newElement;
 }
 
-int checkProcess(struct ProcessElement *p)
+
+int checkProcess(struct ProcessElement *p)    //Checks the staus of a process i.e. completed or not
 {
     int currentState;
     int pidRetrun;
     if (p->pid_2 != -1)
     {
+        //pid process from lecture slides
         pidRetrun = waitpid(p->pid_2, &currentState, WNOHANG);
         if (pidRetrun == 0)
         {
@@ -118,8 +127,8 @@ int checkProcess(struct ProcessElement *p)
 
 void deleteEntry(struct ProcessElement *p)
 {
-    free(p->cmd);
-    free(p);
+    free(p->cmd);   //free data
+    free(p);        //free the struct
 }
 
 void exitCommandProcess()
@@ -128,22 +137,23 @@ void exitCommandProcess()
     while(running == 1)
     {
         int queueStep = 0;
-        checkQueue();
+        checkQueue();     //Check the staus of the queue
         for (queueStep = 0; queueStep < SIZEOFQUEUE; queueStep++)
         {
-            if (pEntry[queueStep] != NULL)
+            if (pEntry[queueStep] != NULL)    //If the program is running let it run.
             {
                 running = 1;
                 break;
             }
         }
-        if (queueStep == SIZEOFQUEUE)
+        if (queueStep == SIZEOFQUEUE)     //If the background processes are done, tell it
         {
             running = 0;
         }
     }
 }
 
+//Print Background Array position \t pid asscociated with the command. 
 void printProcessStart(const struct ProcessElement *p, int pos)
 {
     if (p != NULL)
@@ -205,7 +215,7 @@ void my_execute(char **argument, int background, char* cmd)
             waitpid(pid, &status, 0);
         }
     }
-    //my_executeNormal(cmd, backgroundCheck);
+    
 }
 
 
@@ -218,18 +228,18 @@ void my_execute(char **argument, int background, char* cmd)
 
 void exitShell(char **cmd, int commandCounter)
 {
-    exitCommandProcess();
+    exitCommandProcess();   //Wait until background is done.
     //freedom(cmd);
     printf("\nExiting Now!\n    Commands Issued: %u\n", commandCounter);
-    exit(0);
+    exit(0);    //Exit the shell
 }
 
-void changeDirectory(const char* dir)
+void changeDirectory(const char* dir)   //Take in the modified directory string
 {
     int newPath = chdir(dir);
-    if (newPath == 0)
+    if (newPath == 0)   //If chdir returns 0, setenv
     {
-        setenv("PWD", dir, 1);
+        setenv("PWD", dir, 1);    //make "PWD" the current directory.
         //printf("%s>", getenv("PWD"));
     }
     else
@@ -241,31 +251,33 @@ void changeDirectory(const char* dir)
 void echo(char *string)
 {
 
-    if(string[0] != '$')
+    if(string[0] != '$')  //If first is not $, just print the string.
     {
         printf("%s",string);
     }
-    else if(string[0] == '$')
+    else if(string[0] == '$')  //If $USER
     {
         if(getenv(string))
         {
             int i = 1;
-            while(string[i] != '\0')
+            while(string[i] != '\0')  //Print chars EXCEPT $
             {
                 printf("%c", string[i]);
                 i++;
             }
         }
-        else
+        else                //Error
         {
             printf("Error. command does not exist.");
         }
     }
 }
 
+
+//Print active jobs
 void jobs(const struct ProcessElement *p, int pos)//char* string)
 {
-    if (p != NULL)
+    if (p != NULL)    //If not empty
     {
         if (p->pid_2 != -1)
         {
@@ -289,7 +301,7 @@ void jobs(const struct ProcessElement *p, int pos)//char* string)
 */
 
 
-void freedom(char **theArray)
+void freedom(char **theArray)     //Free up all memory
 {
     int itr = 0;
 
