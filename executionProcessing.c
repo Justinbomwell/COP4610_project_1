@@ -194,7 +194,7 @@ void my_execute(char **argument, int background, char* cmd)
     }
     else
     {
-        if (backgroundCheck == 1)
+        if (backgroundCheck == -1)
         {
             waitpid(pid, &status, WNOHANG);
             pushProcess(mkProcess(pid, -1, cmd));
@@ -219,8 +219,8 @@ void my_execute(char **argument, int background, char* cmd)
 void exitShell(char **cmd, int commandCounter)
 {
     exitCommandProcess();
-    freedom(cmd);
-    printf("\nExiting Now!\n    Commands Issued: %u", commandCounter);
+    //freedom(cmd);
+    printf("\nExiting Now!\n    Commands Issued: %u\n", commandCounter);
     exit(0);
 }
 
@@ -230,6 +230,7 @@ void changeDirectory(const char* dir)
     if (newPath == 0)
     {
         setenv("PWD", dir, 1);
+        //printf("%s>", getenv("PWD"));
     }
     else
     {
@@ -290,13 +291,12 @@ void jobs(const struct ProcessElement *p, int pos)//char* string)
 
 void freedom(char **theArray)
 {
-    size_t itr = 0;
+    int itr = 0;
 
     while (theArray[itr] != NULL)
     {
         free(theArray[itr]);
-        ++itr;
+        itr++;
     }
-    free(theArray);
+    //free(theArray);
 }
-
