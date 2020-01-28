@@ -32,13 +32,14 @@ void singlepipe( instruction* instr_ptr, int bGround);
 void doublepipe( instruction* instr_ptr, int bGround);
 
 //FUNCTIONS FUNCTION CALLS
-void enVar(instruction* instr_ptr);
-void printPrompt();
-int shortRes(instruction* instr_ptr);
-int pathRes(instruction* instr_ptr);
-void func(instruction * instr_ptr,int commandCounter);
-int isFile(const char * path);
-int isDirectory(const char * path);
+void enVar(instruction* instr_ptr);     //expands all environmental variables entered in command line
+void printPrompt();                     //prints the user@machine: working directory> onto command line
+int shortRes(instruction* instr_ptr);   //Takes in tokens and expands '.', "..", and '~' to working directory, 
+                                        //parent directory, and home directory
+int pathRes(instruction* instr_ptr);    //takes in tokens that are executables and expands them 
+void func(instruction * instr_ptr,int commandCounter); //Called in main to implement all parts of project
+int isFile(const char * path);          //checks if cstring is a file somewhere on the machine
+int isDirectory(const char * path);     //checks if cstring is a directory somewhere on the machine
 
 
 
@@ -169,7 +170,6 @@ void clearInstruction(instruction* instr_ptr)
     instr_ptr->numTokens = 0;
 }
 
-//IO&PIPING FUNCTIONS
 void IOredirection( instruction* instr_ptr, int bGround)
 {
     
@@ -459,8 +459,7 @@ void doublepipe(instruction * instr_ptr, int bGround)
     
 }    //end of function
 
-//FUNCTIONS.c CALLS
-void printPrompt()
+void printPrompt()      //prints the user@machine: working directory> onto the command line
 {
     printf("%s", getenv("USER"));
     printf("@");
@@ -468,71 +467,71 @@ void printPrompt()
     printf("%s>", getenv("PWD"));
 }
 
-void enVar(instruction* instr_ptr)
+void enVar(instruction* instr_ptr) //Expands environmental variables
 {
     int a;
     
-    for(a = 0; a < instr_ptr->numTokens; a++)
+    for(a = 0; a < instr_ptr->numTokens; a++)   //Loops through all tokens in instruction
     {
-        if((instr_ptr->tokens)[a] != NULL)
+        if((instr_ptr->tokens)[a] != NULL)  //Make sure no segfault on last null token
         {
-            if(strcmp((instr_ptr->tokens)[a], "$HOME") == 0)
+            if(strcmp((instr_ptr->tokens)[a], "$HOME") == 0)    //expands $HOME env. variable
             {
                 (instr_ptr->tokens)[a] = (char *) calloc(strlen(getenv("HOME")), sizeof(char));
                 strcpy((instr_ptr->tokens)[a], getenv("HOME"));
             }
-            else if(strcmp((instr_ptr->tokens)[a], "$PATH") == 0)
+            else if(strcmp((instr_ptr->tokens)[a], "$PATH") == 0)   //expands $PATH env. variable
             {
                 (instr_ptr->tokens)[a] = (char *) calloc(strlen(getenv("PATH")), sizeof(char));
                 strcpy((instr_ptr->tokens)[a], getenv("PATH"));
             }
-            else if(strcmp((instr_ptr->tokens)[a], "$USER") == 0)
+            else if(strcmp((instr_ptr->tokens)[a], "$USER") == 0)   //expands $USER env. variable
             {
                 (instr_ptr->tokens)[a] = (char *) calloc(strlen(getenv("USER")), sizeof(char));
                 strcpy((instr_ptr->tokens)[a], getenv("USER"));
             }
-            else if(strcmp((instr_ptr->tokens)[a], "$SHELL") == 0)
+            else if(strcmp((instr_ptr->tokens)[a], "$SHELL") == 0)  //expands $SHELL env. variable
             {
                 (instr_ptr->tokens)[a] = (char *) calloc(strlen(getenv("SHELL")), sizeof(char));
                 strcpy((instr_ptr->tokens)[a], getenv("SHELL"));
             }
-            else if(strcmp((instr_ptr->tokens)[a], "$PWD") == 0)
+            else if(strcmp((instr_ptr->tokens)[a], "$PWD") == 0)    //expands $PWD env. variable
             {
                 (instr_ptr->tokens)[a] = (char *) calloc(strlen(getenv("PWD")), sizeof(char));
                 strcpy((instr_ptr->tokens)[a], getenv("PWD"));
             }
         }
     }
-}
+} //END OF FUNCTION
 
 int shortRes(instruction* instr_ptr)
 {
     int a, c, d, e, f, g, h, i;
     int chk;
-    int count = 0;
-    int checkDelim = 0;
+    int count = 0;             
+    int checkDelim = 0;         //Used to track allocation and deallocation of tmp strings
     int t2Check = 0;
     int t3Check = 0;
     int t4Check = 0;
     
-    char * t1 = NULL;
+    char * t1 = NULL;           //Instantiate temporary cstrings that are going to be allocated
     char * t2 = NULL;
     char * t3 = NULL;
     char * t4 = NULL;
     char * delim = NULL;
     
-    for(a = 0; a < instr_ptr->numTokens; a++)
+    for(a = 0; a < instr_ptr->numTokens; a++)   //For loop through all the instructions tokens
     {
-        if((instr_ptr->tokens)[a] != NULL)
+        if((instr_ptr->tokens)[a] != NULL)      //Make sure no seg fault for last null token
         {
-            if(strcmp((instr_ptr->tokens)[a], ".") == 0)
+            if(strcmp((instr_ptr->tokens)[a], ".") == 0)    //If token == '." make it $PWD variable
             {
                 (instr_ptr->tokens)[a] = (char *) calloc(strlen(getenv("PWD")), sizeof(char));
                 strcpy((instr_ptr->tokens)[a], getenv("PWD"));
             }
-            else if(strcmp((instr_ptr->tokens)[a], "..") == 0)
+            else if(strcmp((instr_ptr->tokens)[a], "..") == 0)  //If token == ".." make token directory one up 
             {
-                for(c = strlen(getenv("PWD"))-1; c >= 0; c--)
+                for(c = strlen(getenv("PWD"))-1; c >= 0; c--)   //find where second to last '/' is in token
                 {
                     if(getenv("PWD")[c] == '/')
                     {
@@ -541,89 +540,97 @@ int shortRes(instruction* instr_ptr)
                     }
                 }
                 
-                (instr_ptr->tokens)[a] = (char *) calloc(chk, sizeof(char));
+                (instr_ptr->tokens)[a] = (char *) calloc(chk, sizeof(char)); //New size where second to last '/' was
                 
-                for(d = 0; d < chk; d++)
+                for(d = 0; d < chk; d++)                            //make token cstring up until second to last '/'
                 {
                     ((instr_ptr->tokens)[a])[d] = getenv("PWD")[d];
                 }
             }
-            else if(strcmp((instr_ptr->tokens)[a], "~") == 0)
+            else if(strcmp((instr_ptr->tokens)[a], "~") == 0)       //if token == '~' change it to $HOME env. variable
             {
                 (instr_ptr->tokens)[a] = (char *) calloc(strlen(getenv("HOME")), sizeof(char));
                 strcpy((instr_ptr->tokens)[a], getenv("HOME"));
             }
-            else if(strpbrk((instr_ptr->tokens)[a], "/") != NULL)
+            else if(strpbrk((instr_ptr->tokens)[a], "/") != NULL)   //if token contains '/' anywhere in it
             {
-                if(((instr_ptr->tokens)[a])[0] == '~')
+                if(((instr_ptr->tokens)[a])[0] == '~')  //if '~' in first spot of string only
                 {
+                    //temp cstring allocated for size of $HOME + original token -1 
                     t1  = (char *) calloc(strlen(getenv("HOME")) + strlen((instr_ptr->tokens)[a]) - 1, sizeof(char));
                     
+                    //concatentate $HOME to beginning of temp cstring
                     for(e = 0; e < strlen(getenv("HOME")); e++)
                     {
                         t1[e] = getenv("HOME")[e];
                     }
                     
+                    //concatenate everything from token after "~/" onto temp string
                     for(f = strlen(getenv("HOME")); f < strlen(getenv("HOME"))+strlen((instr_ptr->tokens)[a])-1; f++)
                     {
                         t1[f] = ((instr_ptr->tokens)[a])[f-strlen(getenv("HOME"))+1];
                     }
                     
+                    //copy temp string onto original token
                     (instr_ptr->tokens)[a]  = (char *) calloc(strlen(getenv("HOME")) + strlen((instr_ptr->tokens)[a]) - 1, sizeof(char));
                     strcpy((instr_ptr->tokens)[a], t1);
                     
+                    //free temp string memory
                     free(t1);
                 }
                 
-                delim = strtok((instr_ptr->tokens)[a], "/");
+               
+                delim = strtok((instr_ptr->tokens)[a], "/");    //tokenize string with "/" as delimeter into cstring delim
                 
-                while(delim != NULL)
+                while(delim != NULL)                            //run until token empty(NULL)
                 {
-                    if(strcmp(delim, ".") == 0)
+                    if(strcmp(delim, ".") == 0)                 //if tokenized delim cstring is == '.' 
                     {
-                        checkDelim = 1;
+                        checkDelim = 1;                         //make sure delim is deallocated later
                         
-                        delim = (char *) calloc(strlen(getenv("PWD")), sizeof(char));
-                        strcpy(delim, getenv("PWD"));
+                        delim = (char *) calloc(strlen(getenv("PWD")), sizeof(char)); //allocate PWD strlen into this token
+                        strcpy(delim, getenv("PWD"));   //set token delim equal to working directory
                         
-                        if(t2 != NULL)
+                        if(t2 != NULL)  //if strings have already been concatenated into t2 then go into this
                         {
-                            t3Check = 1;
+                            t3Check = 1;    //make sure t3 deallocaated after this allocation
                             t3 = (char *) calloc(strlen(t2), sizeof(char));
                             
-                            for(g = 0; g < strlen(t2); g++)
+                            for(g = 0; g < strlen(t2); g++) //make t3 contents same as t2
                                 t3[g] = t2[g];
                             
                             
-                            t2Check = 1;
+                            t2Check = 1; //deallocate t2
+                            //add the size of delim to original t2
                             t2 = (char *) calloc(strlen(delim)+strlen(t3)+1, sizeof(char));
                             
+                            //concatentenate original t2 to t3 and then the new delim with $PWD in it
                             strcat(t2, t3);
                             strcat(t2, delim);
                         }
-                        else
+                        else    //if t2 is empty just put the working directory into t2
                         {
-                            t2Check = 1;
+                            t2Check = 1; //make sure t2 is deallocated
                             t2 = (char *) calloc(strlen(delim)+1, sizeof(char));
                             strcat(t2, delim);
                         }
                     }
-                    else if(strcmp(delim, "..") == 0)
+                    else if(strcmp(delim, "..") == 0)   //if new token delim equals ".." change t2 to one directory up
                     {
-                        if(count != 0)
+                        if(count != 0)  //make sure this isnt the first token (I.E. used on root directory)
                         {
-                            h = strlen(t2);
-                            while(t2[h] != '/')
+                            h = strlen(t2); 
+                            while(t2[h] != '/') //find second to last '/' in t2
                                 h--;
                             
-                            t4Check = 1;
-                            t4 = (char *) calloc(strlen(t2), sizeof(char));
+                            t4Check = 1;    //make sure t4 is deallocated 
+                            t4 = (char *) calloc(strlen(t2), sizeof(char)); //make t4 contents equal to t2
                             strcpy(t4, t2);
                             
-                            t2Check = 1;
-                            t2 = (char *) calloc(h+1, sizeof(char));
+                            t2Check = 1;    //make sure t2 is deallocated
+                            t2 = (char *) calloc(h+1, sizeof(char)); // t2's new size is euqal to second to last '/' position
                             
-                            if(t4[0] != '/')
+                            if(t4[0] != '/')    //make sure tokens seperated by '/' & move new size t4 = t2
                             {
                                 strcat(t4, "/");
                                 
@@ -636,113 +643,133 @@ int shortRes(instruction* instr_ptr)
                                     t2[i] = t4[i];
                             }
                             
-                            if(strlen(t2) == 0)
+                            if(strlen(t2) == 0) // root directory case
                                 strcat(t2, "/");
                             
                         }
-                        else
+                        else    //if used on root directory break while loop 
                         {
                             break;
                         }
                     }
-                    else
+                    else //if delim token not '.' or ".." then just concatenate onto t2
                     {
-                        if(t2 != NULL)
+                        if(t2 != NULL)  //if t2 already has contents concatenated into it
                         {
-                            t3Check = 1;
+                            t3Check = 1;    //make sure t3 is deallocated after its contents become t2's contents
                             t3 = (char *) calloc(strlen(t2), sizeof(char));
                             
-                            for(g = 0; g < strlen(t2); g++)
+                            for(g = 0; g < strlen(t2); g++) //make t3 = t2's contents
                                 t3[g] = t2[g];
                             
-                            t2Check = 1;
+                            t2Check = 1;    //make sure t2 is deallocated 
                             
+                            //t2's new size is t3 size + delim token + 1 for '/'
                             t2 = (char *) calloc(strlen(delim)+strlen(t3)+1, sizeof(char));
                             
+                            //concat original t2(t3) to t2 
                             strcat(t2, t3);
                             
+                            //concat a '/' if none on delims 1st position
                             if(delim[0] != '/')
                                 strcat(t2, "/");
                             
+                            //concat delim token to t2
                             strcat(t2, delim);
                         }
-                        else
+                        else    //if first use of t2
                         {
+                            //make t2 size of delim + '/' 
+                            t2Check = 1;
                             t2 = (char *) calloc(strlen(delim)+1, sizeof(char));
                             
                             if(delim[0] != '/')
                                 strcat(t2, "/");
                             
+                            //concat delim to t2
                             strcat(t2, delim);
                         }
                     }
                     
+                    //get new token from instr_ptr->tokens[a]
                     delim = strtok(NULL, "/");
-                    count++;
+                    count++;    //add how many times concat happened to t2
                 }
                 
-                if(count != 0)
+                if(count != 0)  //if something in t2
                 {
+                    //make instr_ptr->tokens[a] equal contents of t2 which is final instruction token
                     (instr_ptr->tokens)[a] = (char *) calloc(strlen(t2), sizeof(char));
                     strcpy((instr_ptr->tokens)[a], t2);
                 }
                 
+                //deallocate all temporary strings if needed 
                 if(t2Check == 1) free(t2); t2 = NULL;
                 if(t3Check == 1) free(t3); t3 = NULL;
                 if(t4Check == 1) free(t4); t4 = NULL;
                 if(checkDelim == 1) free(delim); delim = NULL;
                 
+                //check to see if tokens that went through shortRes are actual files or directories
+                //if not return 0
                 if(isFile((instr_ptr->tokens)[a]) == 0 && isDirectory((instr_ptr->tokens)[a]) == 0)
-                    return 0;
-                
+                return 0;
             }
-            
-            
         }
     }
-    
+    //return 1 if all resolutions are files or directories
     return 1;
-}
+} //END OF FUNCTION
 
-int pathRes(instruction* instr_ptr)
+int pathRes(instruction* instr_ptr) //Everything that isnt a built in or a path with '/' in it needs to be resolved
 {
     int a;
     
-    char * path1;
-    char * delim;
-    char * t1;
+    char * path1;   //used to tokenize to see if an executable file is in one of the tokens
+    char * delim;   //individual tokens of path
+    char * t1;      //used for copying purposes
     
-    for(a = 0; a <instr_ptr->numTokens; a++)
+    for(a = 0; a <instr_ptr->numTokens; a++)    //for loop thorugh all the tokens
     {
+        //make sure not a builtin or a token containing '/' which indicates its already resolved
         if((instr_ptr->tokens)[a] != NULL && strpbrk((instr_ptr->tokens)[a], "/") == NULL && strcmp((instr_ptr->tokens)[a], "cd") != 0 &&
            strcmp((instr_ptr->tokens)[a], "jobs") != 0 && strcmp((instr_ptr->tokens)[a], "exit") != 0 && strcmp((instr_ptr->tokens)[a], "echo") != 0)
         {
+            //make path1 c-string into environmental variable $PATH
             path1 = (char *) calloc(strlen(getenv("PATH")), sizeof(char));
             strcpy(path1, getenv("PATH"));
             
+            //make delim tokenized elements of path1 using ':' as a delimeter
             delim = strtok(path1, ":");
             
+            //continues until delim equals the null part of path1
             while(delim != NULL)
             {
+                //makes t1 size of tokenized delim + executable command from instruction token
                 t1 = (char *) calloc(strlen(delim)+strlen((instr_ptr->tokens)[a])+1, sizeof(char));
+                //places all of these parts together with a '/' in between
                 strcat(t1, delim);
                 strcat(t1, "/");
                 strcat(t1, (instr_ptr->tokens)[a]);
                 
+                //checks if t1 is a file
                 if(access(t1, F_OK) != -1)
                 {
+                    //if t1 is a file make instr_ptr->tokens[a] into the resolved path for executable command
                     (instr_ptr->tokens)[a] = (char *) calloc(strlen(t1), sizeof(char));
                     strcpy((instr_ptr->tokens)[a], t1);
                     return 1;
                 }
                 
-                delim = strtok(NULL, ":");
+                delim = strtok(NULL, ":"); // continue tokenizing path1 into telim until null
             }
             
+            //free variables 
             if(path1 != NULL) free(path1);
             if(t1 != NULL) free(t1);
         }
     }
+    
+    //return 0 if no paths were resolved correctly
     return 0;
 }
 
@@ -874,23 +901,21 @@ void func(instruction * instr_ptr, int commandCounter)
     }
 }
     
-
-
-int isFile(const char * path)
+int isFile(const char * path)   //checks if cstring is a file in the machine
 {
-    if(access(path, F_OK) == -1)
+    if(access(path, F_OK) == -1)    //uses access to see if file exists, if so return 1. else return 0 
         return 0;
     
     return 1;
 }
 
-int isDirectory(const char * path)
+int isDirectory(const char * path)  //checks if cstring is a directory
 {
     struct stat stats;
     
     stat(path, &stats);
     
-    if(S_ISDIR(stats.st_mode))
+    if(S_ISDIR(stats.st_mode))      //if directory return 1, else return 0
         return 1;
     
     return 0;
