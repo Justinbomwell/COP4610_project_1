@@ -132,7 +132,7 @@ Function Descriptions:
     - if all instruction tokens running through pathRes are a file then returns 1
     
 12. void func(instruction * instr_ptr,int commandCounter)
-  -This function looks at the parsed instructions and then decides if the next step is one of four possibilities: I/O redirection, piping, built ins, or regular execution
+  -This function looks at the parsed instructions and then decides if the next step is one of four possibilities: I/O            redirection, piping, built ins, or regular execution
   -After this the tokens are checked for the "&" symbol to indicate background processing 
   -Then the appropriate functions are called depending on which of the four types of execution need to run  
 
