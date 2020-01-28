@@ -53,6 +53,78 @@ Compilation Instructions:
 ◦ Any completed extra credit must be documented in the README to receive credit
 
 
+Function Descriptions: 
+
+0. void example function (int x)
+
+  Example paragraph. Write your stuff here. Include what file to find your function on.  Also include when each file is called, its use, what it takes in and returns, and why you di each part. Try not to make multiple paragraphs and to keep everything within one indentation like i am doing here.  
+
+1. void addToken(instruction* instr_ptr, char* tok)
+
+2. void printTokens(instruction* instr_ptr)
+
+3. void clearInstruction(instruction* instr_ptr)
+
+4. void addNull(instruction* instr_ptr)
+
+5. void IOredirection( instruction* instr_ptr, int bGround)
+
+void singlepipe( instruction* instr_ptr, int bGround)
+
+void doublepipe( instruction* instr_ptr, int bGround)
+
+void enVar(instruction* instr_ptr)
+
+void printPrompt()
+
+int shortRes(instruction* instr_ptr)
+
+int pathRes(instruction* instr_ptr)
+
+void func(instruction * instr_ptr,int commandCounter)
+
+int isFile(const char * path)
+
+int isDirectory(const char * path)
+
+
+Known Bugs: 
+1. 
+2.
+3.
+4.
+5.
+6.
+7.
+8.
+9.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 Currently Known Bugs:
 Your README will contain a list of all known bugs in your program. For each bug, include a brief
 description of when it is occurring (compile, link, or runtime), when the bug first showed up, the
