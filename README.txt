@@ -81,6 +81,9 @@ Function Descriptions:
 7. void doublepipe( instruction* instr_ptr, int bGround)
 
 8. void enVar(instruction* instr_ptr)
+  - For loops through tokens of instruction
+  - Checks to see for environmental variables such as "$HOME"
+    - expands environmental variables using getenv
 
 9. void printPrompt()
   - Prints the user, machine and working directory before the user enters anything on the command line
@@ -122,12 +125,13 @@ Function Descriptions:
     - if not a file return 0
     - if all instruction tokens running through pathRes are a file then returns 1
     
-    
 12. void func(instruction * instr_ptr,int commandCounter)
 
 13. int isFile(const char * path)
+  - Uses access to check if c-string passed in is a file
 
 14. int isDirectory(const char * path)
+  - Uses stat to check if c-string passed in is a directory
 
 
 Known Bugs/Unfinished Portions: 
