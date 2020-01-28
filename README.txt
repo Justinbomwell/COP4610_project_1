@@ -59,32 +59,75 @@ Function Descriptions:
   Example paragraph. Write your stuff here. Include what file to find your function on.  Also include when each file is called, its use, what it takes in and returns, and why you di each part. Try not to make multiple paragraphs and to keep everything within one indentation like i am doing here.  
 
 1. void addToken(instruction* instr_ptr, char* tok)
+  - Take in struct instruction and c-string command from the command line
+  - Make space for an additional token in the instruction
+  - place the c-string tok into the new token that was allocated
 
 2. void printTokens(instruction* instr_ptr)
+  - print each individual token on a new line from the instruction 
 
 3. void clearInstruction(instruction* instr_ptr)
+  - Go through the instructions individual tokens and free their memory
+  - Free the actual instruction 
+  - Set the instruction to NULL and numTokens of the instruction to 0
 
 4. void addNull(instruction* instr_ptr)
+  - After all of the commands are entered on the command line one last token is added to the instruction and set as NULL
 
 5. void IOredirection( instruction* instr_ptr, int bGround)
 
-void singlepipe( instruction* instr_ptr, int bGround)
+6. void singlepipe( instruction* instr_ptr, int bGround)
 
-void doublepipe( instruction* instr_ptr, int bGround)
+7. void doublepipe( instruction* instr_ptr, int bGround)
 
-void enVar(instruction* instr_ptr)
+8. void enVar(instruction* instr_ptr)
 
-void printPrompt()
+9. void printPrompt()
+  - Prints the user, machine and working directory before the user enters anything on the command line
 
-int shortRes(instruction* instr_ptr)
+10. int shortRes(instruction* instr_ptr)
+  - For loops through each token of the instruction
+  - Checks for a token that equals '.', "..", or '~'
+    - In the case for '.' 
+      - Reallocate new size of token to equal the string length of the working directory
+      - Copy working directory string over to the token previously holding '.' string
+    - In the case for ".."
+      - Get the location of the second to last '/' in the working directory string
+      - Reallocate the ".." string to equal the size of the position of the last '/' in the working directory
+      - Copy the working directory into the token previously holding ".." until the parent directory
+    - In the case for '~'
+      - Reallocate new size of token to equal the string length of the home directory
+      - Copy home directory string over to the token previously holding '~'
+  - Checks for a token containing '/' anywhere in the string
+    - Checks if first character of the token is '~'
+      - Allocate new memory for size of home directory string + Original token string length -1 because removing '~'
+      - Replace '~' with the home directory and then concatenate the rest of the string onto the end
+    - Tokenize the instruction token string with the delimiter being '/' in a while loop until no more tokens
+      - If new token equals '.' 
+        - Make the new token the size of the working directory 
+        - make new token previously containg '.' into the working directory
+        - Concatenate the new token to the original token then concatenate a '/' onto the end
+      - If new token equals ".."
+        - Make sure it is not the first token from the original token. If so break the loop
+        - If it isnt the first token then find where the second to last '/' is in the original token
+        - Take off all the characters of the token after the second to last '/' in the string
+  - Check if the tokens resolved for shorcuts are either files or directories
+  - If not file or directory return 0, If it is a file or directory then return 1
 
-int pathRes(instruction* instr_ptr)
+11. int pathRes(instruction* instr_ptr)
+  - For loop through all tokens of the instruction
+  - If token not a builtin or does not contain a '/' go resolve its path 
+    - Tokenize the path environmental variable with the delimeter ':' using a while loop until done
+    - concatenate the token from the instruction onto the tokenized path segments and check if it is not a file
+    - if not a file return 0
+    - if all instruction tokens running through pathRes are a file then returns 1
+    
+    
+12. void func(instruction * instr_ptr,int commandCounter)
 
-void func(instruction * instr_ptr,int commandCounter)
+13. int isFile(const char * path)
 
-int isFile(const char * path)
-
-int isDirectory(const char * path)
+14. int isDirectory(const char * path)
 
 
 Known Bugs/Unfinished Portions: 
