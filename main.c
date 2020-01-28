@@ -35,7 +35,7 @@ void doublepipe( instruction* instr_ptr, int bGround, char* cmd);
 void enVar(instruction* instr_ptr);     //expands all environmental variables entered in command line
 void printPrompt();                     //prints the user@machine: working directory> onto command line
 int shortRes(instruction* instr_ptr);   //Takes in tokens and expands '.', "..", and '~' to working directory,
-//parent directory, and home directory
+                                        //parent directory, and home directory
 int pathRes(instruction* instr_ptr);    //takes in tokens that are executables and expands them
 void func(instruction * instr_ptr,int commandCounter, char* tem); //Called in main to implement all parts of project
 int isFile(const char * path);          //checks if cstring is a file somewhere on the machine
