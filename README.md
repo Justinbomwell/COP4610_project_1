@@ -14,7 +14,6 @@ Team Members and Responsibilities:
   • Pipes
   • Implementation of all functions in main using func()
 
-  
   Scott Forn:
   • Execution
   • Background Processes
@@ -23,20 +22,30 @@ Team Members and Responsibilities:
   
   
 Tar Archive Contents:
-  README.md:
-  • Execution
-  • Background Processes
-  • Built Ins
+  main.c:
+  • Prints prompt
+  • Parses instructions
+  • Shorcut Resolution function
+  • Resolves Environmental Variables
+  • Path Resolution function
+  • Input/Output Redirection function
+  • Piping functions
+  • Function to implement the other functions and runs shell in main
   
-  Makefile:
-  • Execution
-  • Background Processes
-  • Built Ins
+  executionProcessing.h:
+  • Declare Normal Execute function
+  • Declare Background Processesing Execution
+  • Declare Built Ins
   
-  Makefile:
-  • Execution
-  • Background Processes
-  • Built Ins
+  executionProcessing.c:
+  • Define Normal Execute function
+  • Define Background Processesing Execution
+  • Define Built Ins
+  
+  makefile:
+  • compile main.c, executionProcessing.h & executionProcessing.c
+  
+  
   
 Compilation Instructions:
   • To compile the project, move to the working directory that contains our opened .tar file
