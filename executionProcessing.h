@@ -35,7 +35,7 @@ struct ProcessElement
     char* cmd;  //process command
 };
 
-// global process queue
+// global queue for processes
 #define SIZEOFQUEUE 256
 struct ProcessElement* pEntry[SIZEOFQUEUE];
 
@@ -59,11 +59,7 @@ void printProcessStart(const struct ProcessElement *p, int pos);
 
 char* PathEnvBuildPath(char* str);
 void my_execute(char **argument, int background, char* cmd);//, int pipes, int fileRedirects);
-void my_executeNormal(char **cmd, int background);
-char** my_executePipes(char **cmd, int background, int symbol);
-char** my_executeInput(char **cmd, int background, int symbol);
-char** my_executeOutput(char **cmd, int background, int symbol);
-char* DeleteCharacter(char* line, size_t start, size_t end);
+
 /*
   ___      _ _ _     _
  | _ )_  _(_) | |_  (_)_ _  ___
@@ -84,7 +80,7 @@ void jobs(const struct ProcessElement *p, int pos);
 */
 
 void freedom(char **theArray);
-char* toString(char** instr_ptr);
+
 
 
 #endif //PROJECT_1_MYSHELL_SHORTCUTANDPROCESSRESOLUTION_H
