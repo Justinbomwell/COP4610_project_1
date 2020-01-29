@@ -70,27 +70,20 @@ Function Descriptions:
   - Set the instruction to NULL and numTokens of the instruction to 0
 
 4. void addNull(instruction* instr_ptr)
-  - After all of the commands are entered on the command line one last token is added to the instruction 
-    and set as NULL
+  - After all of the commands are entered on the command line one last token is added to the instruction and set as NULL
 
 5. void IOredirection( instruction* instr_ptr, int bGround)
-  - This function takes in the instruction pointer, and an integer which will equal 1 if the command should 
-    be run in the background or 0 if the command should not 
-  - This function first parses through the tokens to determine which will be the input file and which will be 
-    the output file
-  - The fork function is called and in the child process redirects the input and output only if there are 
-    input and output files respectively 
+  - This function takes in the instruction pointer, and an integer which will equal 1 if the command should be run in the background or 0 if the command should not 
+  - This function first parses through the tokens to determine which will be the input file and which will be the output file
+  - The fork function is called and in the child process redirects the input and output only if there are input and output files respectively 
   - Then the my_execute function is called to run the command and the child process is exited.  
 
 6. void singlepipe( instruction* instr_ptr, int bGround)
-  - This function takes in the instruction pointer, and an integer which will equal 1 if the command should be run in the         background or 0 if the command should not
-  - First this function copies the writing function and the reading function as tokens in the two instruction variables 
-    cmd1 and cmd2
+  - This function takes in the instruction pointer, and an integer which will equal 1 if the command should be run in the background or 0 if the command should not
+  - First this function copies the writing function and the reading function as tokens in the two instruction variables cmd1 and cmd2
   - The program forks, the pipe function is called, and program forks again
-  - Inside the first child the input and output file descriptors are changed, the first function is executed, and the 
-    child process is terminated
-  - Again inside the seccond child the input and output file descriptors are changed, the seccond function is executed, 
-    and the child process is terminated
+  - Inside the first child the input and output file descriptors are changed, the first function is executed, and the child process is terminated
+  - Again inside the seccond child the input and output file descriptors are changed, the seccond function is executed, and the child process is terminated
   - The parent program then calls the wait function to wait for the child processes to finish
 
 7. void doublepipe( instruction* instr_ptr, int bGround)
@@ -145,7 +138,7 @@ Function Descriptions:
     - if all instruction tokens running through pathRes are a file then returns 1
     
 12. void func(instruction * instr_ptr,int commandCounter)
-  - This function looks at the parsed instructions and then decides if the next step is one of four possibilities: I/O             redirection, piping, built ins, or regular execution
+  - This function looks at the parsed instructions and then decides if the next step is one of four possibilities: I/O redirection, piping, built ins, or regular execution
   - After this the tokens are checked for the "&" symbol to indicate background processing 
   - Then the appropriate functions are called depending on which of the four types of execution need to run  
 
@@ -219,12 +212,9 @@ Function Descriptions:
   - Frees all of the allocated memory.
   
 Known Bugs/Unfinished Portions: 
--GUYS MAKE SURE TO INFORM THEM OF 1. WHEN IT HAPPENDS.  2. WHY IT HAPPENDS.  3.  HOW WE ATTEMPTED TO FIX IT
-1.  Bug: When changing directory into the subdirectory the prompt does not print out whole working directory and 
-        just the directory it is currently in
+1.  Bug: When changing directory into the subdirectory the prompt does not print out whole working directory and just the directory it is currently in
     - It is happening because there is no resolution of the directory name when the directory is changed
-    - Tried to solve it by putting a shortRes function before the directory is changed but getenv("PWD") 
-      only returns the name of the directory it is in and not the previous directories seperated by '/'
+    - Tried to solve it by putting a shortRes function before the directory is changed but getenv("PWD") only returns the name of the directory it is in and not the previous directories seperated by '/'
 2.  Bug: Background processing prints "junk" after a job finishes in the [pid number] section. Occurs in RUNTIME.
       - Example input:
           ls &
@@ -243,13 +233,7 @@ Known Bugs/Unfinished Portions:
      string (so it could all be printed as one string of [/bin/ls &/], for example), removing the '&'
      character from the token list, if it occurred, and crying (just kidding).
         
-3. 
-4.
-5.
-6.
-7.
-8.
-9.
+3.  When using double piping (example: cmd1 | cmd2 | cmd3) the program waits for the user to input again before printing the prompt.  This bug does not cause any issues with the functionality of the program.  To attempt to fix this we tried exiting the child processes at different times using the exit() function. However this was unseccessful. 
 
 
 
@@ -267,39 +251,3 @@ Special Considerations:
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Currently Known Bugs:
-Your README will contain a list of all known bugs in your program. For each bug, include a brief
-description of when it is occurring (compile, link, or runtime), when the bug first showed up, the
-symptoms the bug is giving off, and how you attempted to fix it. Undocumented bugs will incur a
-greater penalty.
-Demonstrating that you understand why a program has a bug, even if you are unsure of how to fix it,
-shows that you are thorough. An undocumented bug shows that you do not understand the program, or
-that you tried to hide a flaw. Undocumented bugs only slow down future development.
-Known bugs and unfinished portions of the project
-• Special considerations or anything I should know when grading your solution
-◦ Any completed extra credit must be documented in the README to receive credit
-
-
-
-GIT Commit Log
-• Submit a screenshot of the commits made to the repository
-• All groups must use a private GIT repository
-• All group members must actively commit his/her contributions to the repository
-• If the commit log / division of labor indicates a group member does not contribute equally,
-deductions will be made for that group member
