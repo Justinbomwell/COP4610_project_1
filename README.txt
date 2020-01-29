@@ -49,7 +49,7 @@ Tar Archive Contents:
 Compilation Instructions:
   • To compile the project, move to the working directory that contains our opened .tar file
   • Type "make" into the command line 
-
+◦ Any completed extra credit must be documented in the README to receive credit
 
 
 Function Descriptions: 
@@ -148,12 +148,74 @@ Function Descriptions:
 
 14. int isDirectory(const char * path)
   - Uses stat to check if c-string passed in is a directory
+  
+15. void backgroundInit()
+  - Initilizes pElement struct with NULL in all elements.
 
+16. void pushProcess(struct ProcessElement *p)
+  - pEntry is checked for a NULL.
+  - If it is NULL, the entry is set to the value passed in (*p)
+  - printProcessStart(pEntry[i], i); is called.
+  
+17. void rmProcess(int index)
+  - If the index is int the range of 0 - 256, and if the index is not equal to NULL, the function
+  -       deleteEntry(pEntry[index]);
+  - is called.      
 
+18. void checkQueue()
+  - Loops through the whole array, if an index is NOT equal to NULL adn if 
+  -       checkProcess(pEntry[i])
+  - returns a value of 1, 
+  -       rmProcess(i);
+  - is called.
+  
+19. struct ProcessElement* mkProcess(int pid_1, int pid_2, char *cmd)
+  - Creates a new element with:
+  -       struct ProcessElement* newElement = (struct ProcessElement*)calloc(1, sizeof(struct ProcessElement));
+  - and assigns the data elements pid_1,_2, and cmd to the elements of newElement. 
+  
+20. int checkProcess(struct ProcessElement *p)
+  - Checks the pid values of the ProcessElement struct, to determine if they are valid.
+  - If they are not, an error is printed.
+  
+21. void deleteEntry(struct ProcessElement *p)
+  - Frees the *p and its data.  Frees p and p->cmd  
+
+22. void exitCommandProcess()
+  - Checks each element of the Background array.
+  - If the element is not equal to NULL, it is flagged as still running.
+  
+23. void printProcessStart(const struct ProcessElement *p, int pos)
+  - If the element is not equal to NULL, the position and pid number are printed.
+  
+24. void my_execute(char **argument, int background, char* cmd)
+  - Forks and runs a child process on the command passed in.
+  - If the process is flagged as a background process, a wait pid WNOHANG is called and 
+  -       pushProcess(mkProcess(pid, -1, cmd));
+  - is called.
+  
+25. void exitShell(char **cmd, int commandCounter)
+  - Calls: 
+  -       exitCommandProcess();
+  - and prints the exit message, along with the commands issued.
+  
+26. void changeDirectory(const char* dir)
+  - Makes a new path with chdir(dir) and then sets the environment variable to the new working directory, if new path was 0.
+
+27. void echo(char *string)
+  - If the first element of the string, the path variable is expanded, if valid. 
+  - Otherwise, the string that was passed in is printed.
+
+28. void jobs(const struct ProcessElement *p, int pos)
+  - If background process is not NULL, the active jobs are printed.
+
+29. void freedom(char **theArray)
+  - Frees all of the allocated memory.
+  
 Known Bugs/Unfinished Portions: 
 -GUYS MAKE SURE TO INFORM THEM OF 1. WHEN IT HAPPENDS.  2. WHY IT HAPPENDS.  3.  HOW WE ATTEMPTED TO FIX IT
 1. When changing directory into the subdirectory the prompt does not print out whole working directory and 
-   just the directory it is currently in. Happens during remainder of shell runtime.
+   just the directory it is currently in
     - It is happening because there is no resolution of the directory name when the directory is changed
     - Tried to solve it by putting a shortRes function before the directory is changed but getenv("PWD") 
       only returns the name of the directory it is in and not the previous directories seperated by '/'
@@ -168,12 +230,47 @@ Known Bugs/Unfinished Portions:
 
 
 
-Extra Credit
-1. Shell-Ception: Shell can be called within shell.
-
-
-
 Special Considerations: 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Currently Known Bugs:
+Your README will contain a list of all known bugs in your program. For each bug, include a brief
+description of when it is occurring (compile, link, or runtime), when the bug first showed up, the
+symptoms the bug is giving off, and how you attempted to fix it. Undocumented bugs will incur a
+greater penalty.
+Demonstrating that you understand why a program has a bug, even if you are unsure of how to fix it,
+shows that you are thorough. An undocumented bug shows that you do not understand the program, or
+that you tried to hide a flaw. Undocumented bugs only slow down future development.
+Known bugs and unfinished portions of the project
+• Special considerations or anything I should know when grading your solution
+◦ Any completed extra credit must be documented in the README to receive credit
 
 
 
