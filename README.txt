@@ -233,7 +233,7 @@ Known Bugs/Unfinished Portions:
      string (so it could all be printed as one string of [/bin/ls &/], for example), removing the '&'
      character from the token list, if it occurred, and crying (just kidding).
         
-3.  When using double piping (example: cmd1 | cmd2 | cmd3) the program waits for the user to input again before printing the prompt.  This bug does not cause any issues with the functionality of the program.  To attempt to fix this we tried exiting the child processes at different times using the exit() function. However this was unseccessful. 
+3.  Bug: When using double piping (example: cmd1 | cmd2 | cmd3) the program waits for the user to input again before printing the prompt.  This bug does not cause any issues with the functionality of the program.  To attempt to fix this we tried exiting the child processes at different times using the exit() function. However this was unseccessful. 
 
 
 
