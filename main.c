@@ -65,6 +65,8 @@ int main() {
         do {
             //scans for next token and allocates token var to size of scanned token
             scanf("%ms", &token);
+            cmd = malloc(strlen(token)+1); 
+            strcpy(cmd, token); 
             temp = (char*)malloc((strlen(token) + 1) * sizeof(char));
 
             int i;
@@ -385,7 +387,7 @@ void singlepipe(instruction * instr_ptr, int bGround)
 
 void doublepipe(instruction * instr_ptr, int bGround, char* cmd)
 {
-int status;                 //these commands are temporary holders for the indivisual commands between pipes 
+                 //these commands are temporary holders for the indivisual commands between pipes 
     instruction cmd1;
     instruction cmd2;
     instruction cmd3; 
@@ -809,7 +811,6 @@ void func(instruction * instr_ptr, int commandCounter, char* tem)
     int a;
     int check = 0; // 1 ==> execute, 2 ==> I/O, 3 ==> piping
     int bGround = 0;
-    int valid = 0;
     int numofpipes = 0;
 
 
@@ -827,7 +828,7 @@ void func(instruction * instr_ptr, int commandCounter, char* tem)
 
 
         else if(strcmp((instr_ptr->tokens)[a], "exit") == 0)
-        {    exitShell(instr_ptr, commandCounter); break;   }
+        {    exitShell((char**) instr_ptr, commandCounter); break;   }
 
         else if(strcmp((instr_ptr->tokens)[a], "jobs") == 0)
         {    int i = 0;
