@@ -290,7 +290,7 @@ void IOredirection( instruction* instr_ptr, int bGround, char* cmd)
 
 void singlepipe(instruction * instr_ptr, int bGround)
 {
-    int status;
+    int status;          //these commands are temporary holders for the indivisual commands between pipes 
     instruction cmd1;
     instruction cmd2;
     cmd1.tokens = NULL;
@@ -300,7 +300,7 @@ void singlepipe(instruction * instr_ptr, int bGround)
 
     int i;
     int p = 0; 
-    for (i = 0; i < instr_ptr->numTokens; i++)
+    for (i = 0; i < instr_ptr->numTokens; i++)             //this loop is to copy the commands into the holders
     {
         if ((instr_ptr->tokens)[i] != NULL)
         {   
@@ -324,7 +324,7 @@ void singlepipe(instruction * instr_ptr, int bGround)
             
         }
     }
-    addNull(&cmd1);
+    addNull(&cmd1);                                 
     pathRes(&cmd1);
     addNull(&cmd2);
     pathRes(&cmd2);
@@ -385,28 +385,56 @@ void singlepipe(instruction * instr_ptr, int bGround)
 
 void doublepipe(instruction * instr_ptr, int bGround, char* cmd)
 {
-    char * cmd1[2];
-    char * cmd2[2];
-    char * cmd3[2];
-    cmd1[1] = NULL;
-    cmd2[1] = NULL;
-    cmd3[1] = NULL;
+int status;                 //these commands are temporary holders for the indivisual commands between pipes 
+    instruction cmd1;
+    instruction cmd2;
+    instruction cmd3; 
+    cmd1.tokens = NULL;
+    cmd1.numTokens = 0;
+    cmd2.tokens = NULL;
+    cmd2.numTokens = 0;
+    cmd3.tokens = NULL; 
+    cmd3.numTokens = 0; 
+
     int i;
-    int x = 0;
-    for (i = 0; i < instr_ptr->numTokens; i++) {
+    int p = 0; 
+    for (i = 0; i < instr_ptr->numTokens; i++)                  //this loop is to copy the commands into the holders
+    {
         if ((instr_ptr->tokens)[i] != NULL)
+        {   
+
             if (strcmp((instr_ptr->tokens)[i],"|") == 0)
             {
-                x = 1;
-                strcpy(cmd1[0], (instr_ptr->tokens)[i-1]);
-                strcpy(cmd2[0], (instr_ptr->tokens)[i+1]);
-            }
-        if ((strcmp((instr_ptr->tokens)[i],"<") == 0) && x == 1)
-        {
-            strcpy(cmd3[0], (instr_ptr->tokens)[i+1]);
+                p++; 
+                i++; 
+            }   
 
+            if (p == 0)
+            {
+                addToken(&cmd1, (instr_ptr->tokens)[i]);
+            }
+
+             if (p == 1)
+            {
+                addToken(&cmd2, (instr_ptr->tokens)[i]);
+            }  
+            if (p == 2)
+            {
+                addToken(&cmd3, (instr_ptr->tokens)[i]);
+            } 
+
+            
         }
     }
+    addNull(&cmd1);
+    pathRes(&cmd1);
+    addNull(&cmd2);
+    pathRes(&cmd2);
+    addNull(&cmd3);
+    pathRes(&cmd3);
+
+
+
 
     int fd1[2];
     int fd2[2];
@@ -438,20 +466,25 @@ void doublepipe(instruction * instr_ptr, int bGround, char* cmd)
                 close(0);
                 dup(5);
                 close(3); close(4); close(5); close(6);
-                my_execute(cmd3, bGround, cmd);
+                execv(cmd3.tokens[0], cmd3.tokens);
+                exit(1); 
             }
         }
         else             //child #2
         {
             close(0); dup(3); close(1); dup(6); close(3); close(4); close(5);
-            my_execute(cmd2, bGround, cmd);
+            execv(cmd2.tokens[0], cmd2.tokens);
+                            exit(1); 
+
         }
 
     }
     else                //child #1
     {
         close(1); dup(4); close(3); close(4); close(5); close(6);
-        my_execute(cmd1, bGround, cmd);
+        execv(cmd1.tokens[0], cmd1.tokens);
+                        exit(1); 
+
     }
 
 
