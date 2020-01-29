@@ -49,6 +49,8 @@ Tar Archive Contents:
 Compilation Instructions:
   • To compile the project, move to the working directory that contains our opened .tar file
   • Type "make" into the command line 
+  • To clean the directory the shell is running in, type "make clean" into the command line.
+  • This will remove the .o files and the "shell" executable.
 ◦ Any completed extra credit must be documented in the README to receive credit
 
 
@@ -232,7 +234,7 @@ Known Bugs/Unfinished Portions:
 
 Special Considerations: 
 
-
+• The "Shell-ception" extra credit was completed.
 
 
 
