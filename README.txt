@@ -51,7 +51,7 @@ Compilation Instructions:
   • Type "make" into the command line 
   • To clean the directory the shell is running in, type "make clean" into the command line.
   • This will remove the .o files and the "shell" executable.
-◦ Any completed extra credit must be documented in the README to receive credit
+
 
 
 Function Descriptions: 
@@ -221,7 +221,24 @@ Known Bugs/Unfinished Portions:
     - It is happening because there is no resolution of the directory name when the directory is changed
     - Tried to solve it by putting a shortRes function before the directory is changed but getenv("PWD") 
       only returns the name of the directory it is in and not the previous directories seperated by '/'
-2.
+2.  Bug: Background processing prints "junk" after a job finishes in the [pid number] section. Occurs in RUNTIME.
+      - Example input:
+          ls &
+        Output:
+          [0]     [17155]
+          name@linprog1.cs.fsu.edu:/home/majors/name/cop4610/file>/bin/ls: cannot access &: No such file or directory
+        Input:
+          ls  
+        Output:
+          executionProcessing.c  executionProcessing.o  main.o    shell
+          executionProcessing.h  main.c                 makefile
+          [0]+    [H??H9?u?H?[]A\A]A^A_Ðf.?]
+          
+     This bug first appeared when the entire program was put together and tested as a single unit and is probably. 
+     a bad memory access, somewhere. Attempts to fix the bug included combining the command tokens into a single 
+     string (so it could all be printed as one string of [/bin/ls &/], for example), removing the '&'
+     character from the token list, if it occurred, and crying (just kidding).
+        
 3.
 4.
 5.
