@@ -216,8 +216,8 @@ Function Descriptions:
   
 Known Bugs/Unfinished Portions: 
 -GUYS MAKE SURE TO INFORM THEM OF 1. WHEN IT HAPPENDS.  2. WHY IT HAPPENDS.  3.  HOW WE ATTEMPTED TO FIX IT
-1. When changing directory into the subdirectory the prompt does not print out whole working directory and 
-   just the directory it is currently in
+1.  Bug: When changing directory into the subdirectory the prompt does not print out whole working directory and 
+        just the directory it is currently in
     - It is happening because there is no resolution of the directory name when the directory is changed
     - Tried to solve it by putting a shortRes function before the directory is changed but getenv("PWD") 
       only returns the name of the directory it is in and not the previous directories seperated by '/'
@@ -239,7 +239,7 @@ Known Bugs/Unfinished Portions:
      string (so it could all be printed as one string of [/bin/ls &/], for example), removing the '&'
      character from the token list, if it occurred, and crying (just kidding).
         
-3.
+3. 
 4.
 5.
 6.
