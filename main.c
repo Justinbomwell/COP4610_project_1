@@ -29,7 +29,7 @@ void addNull(instruction* instr_ptr);
 //IO&PIPING FUNCTION CALLS
 void IOredirection( instruction* instr_ptr, int bGround, char* cmd);
 void singlepipe( instruction* instr_ptr, int bGround);
-void doublepipe( instruction* instr_ptr, int bGround, char* cmd);
+void doublepipe( instruction* instr_ptr, int bGround);
 
 //FUNCTIONS FUNCTION CALLS
 void enVar(instruction* instr_ptr);     //expands all environmental variables entered in command line
@@ -385,7 +385,7 @@ void singlepipe(instruction * instr_ptr, int bGround)
 
 }//end of single pipe
 
-void doublepipe(instruction * instr_ptr, int bGround, char* cmd)
+void doublepipe(instruction * instr_ptr, int bGround)
 {
                  //these commands are temporary holders for the indivisual commands between pipes 
     instruction cmd1;
@@ -932,7 +932,7 @@ void func(instruction * instr_ptr, int commandCounter, char* tem)
         if (numofpipes == 2)
         {
             if(instr_ptr->numTokens < 6) printf("%s\n", "Invalid Syntax");
-            else if(pathRes(instr_ptr) == 1)doublepipe(instr_ptr,bGround, tem);
+            else if(pathRes(instr_ptr) == 1)doublepipe(instr_ptr,bGround);
         }
 
     }
