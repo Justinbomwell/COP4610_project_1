@@ -182,23 +182,25 @@ void IOredirection( instruction* instr_ptr, int bGround, char* cmd)
     char * outputfile;
     bool input = false;
     bool output = false;
-
-    //char * cmd[2];
-
-    //strcpy(cmd[0], (instr_ptr->tokens)[0]);
-    // cmd[1] = NULL;
-    // printf("Test 6.7\n");
+    instruction cmd1;
+   cmd1.tokens = NULL;
+   cmd1.numTokens = 0;
+  
     int i;
-    //  printf("Print function round 2:  \n");
-
-    // printTokens(&instr);
-
+    int p = 0; 
     for (i = 0; i < instr_ptr->numTokens-1; i++)
     {
-        //printf(" current token is : %s \n", (instr_ptr->tokens)[i]);
-
         if ((instr_ptr->tokens)[i] != NULL)
         {
+            if (strcmp((instr_ptr->tokens)[i],"<") == 0 || strcmp((instr_ptr->tokens)[i],">") == 0)
+            {
+                p = 1; 
+            }
+
+            if (p == 0)
+            {               
+                addToken(&cmd1, (instr_ptr->tokens)[i]);
+            }
 
 
             if (strcmp((instr_ptr->tokens)[i],"<") == 0)
@@ -218,6 +220,9 @@ void IOredirection( instruction* instr_ptr, int bGround, char* cmd)
 
     }
 
+    addNull(&cmd1);
+    pathRes(&cmd1);
+
     //bool input and output are for if there is input and output redirection needed
 
     //fd is file descriptor
@@ -235,7 +240,6 @@ void IOredirection( instruction* instr_ptr, int bGround, char* cmd)
 
             int fd =  open(inputfile, O_RDONLY);
 
-
             if (fd == -1)            //will return -1 if file can't be opened
             {
                 printf("Error. Cannot open filename: %s\n", inputfile);
@@ -251,8 +255,7 @@ void IOredirection( instruction* instr_ptr, int bGround, char* cmd)
         //input redirection
         if (output == true)
         {
-            //    printf("testing 4 \n");
-            int fd2 = open(outputfile, O_CREAT|O_WRONLY|O_TRUNC);         //WHAT DOES TRUNC do
+            int fd2 = open(outputfile, O_CREAT|O_WRONLY|O_TRUNC);      
 
             if (fd2 == -1)
             {
@@ -266,7 +269,8 @@ void IOredirection( instruction* instr_ptr, int bGround, char* cmd)
                 close (fd2);
             }
         }
-        my_execute(instr_ptr->tokens, bGround, cmd);
+        my_execute(cmd1.tokens, bGround, cmd);
+       // execv(cmd1.tokens[0], cmd1.tokens);
         exit(1);
 
 
@@ -275,7 +279,7 @@ void IOredirection( instruction* instr_ptr, int bGround, char* cmd)
 
     else    //parent function
     {
-        //waitpid(0);
+        waitpid(pid, NULL, 0);
     }
 
     if (input == true)  {   free(inputfile); }
@@ -290,42 +294,41 @@ void singlepipe(instruction * instr_ptr, int bGround)
     instruction cmd1;
     instruction cmd2;
     cmd1.tokens = NULL;
+    cmd1.numTokens = 0;
+    cmd2.tokens = NULL;
     cmd2.numTokens = 0;
-    cmd1.tokens = NULL;
-    cmd2.numTokens = 0;
-    char * temp1;
-    char * temp2;
-    char ls[] = "/bin/ls";
-    printf("test print 1 \n");
 
     int i;
+    int p = 0; 
     for (i = 0; i < instr_ptr->numTokens; i++)
     {
         if ((instr_ptr->tokens)[i] != NULL)
-        {
+        {   
+
             if (strcmp((instr_ptr->tokens)[i],"|") == 0)
             {
+                p = 1; 
+                i++; 
+            }   
 
-                temp1 = (char *) calloc(strlen((instr_ptr->tokens)[i-1]), sizeof(char));
-                temp2 = (char *) calloc(strlen((instr_ptr->tokens)[i+1]), sizeof(char));
-
-                addToken(&cmd1, (instr_ptr->tokens)[i-1]);
-                addNull(&cmd1);
-                pathRes(&cmd1);
-                printTokens(&cmd1);
-
-                addToken(&cmd2, (instr_ptr->tokens)[i+1]);
-                addNull(&cmd2);
-                pathRes(&cmd2);
-                printTokens(&cmd2);
-
-
-                printf("test print 2\n");
-
+            if (p == 0)
+            {
+                addToken(&cmd1, (instr_ptr->tokens)[i]);
             }
+
+             if (p == 1)
+            {
+                addToken(&cmd2, (instr_ptr->tokens)[i]);
+            }  
+
+            
         }
     }
-    printf("test print \n");
+    addNull(&cmd1);
+    pathRes(&cmd1);
+    addNull(&cmd2);
+    pathRes(&cmd2);
+
 
     int fd[2];
     pid_t p2;
@@ -333,44 +336,35 @@ void singlepipe(instruction * instr_ptr, int bGround)
     pid_t p1 = fork();
     if (p1 == 0)        // child 1 for output redirection
     {
-        printf("fd[0] %d \n", fd[0]);
-        printf("fd[1] %d \n", fd[1]);
 
         if (pipe(fd) < 0)
         {  printf("Pipe could not be initialized. \n");
         }
 
-        printf("Piped: fd[0] %d \n", fd[0]);
-        printf("fd[1] %d \n", fd[1]);
-
         p2 = fork();         //child 2 inside parent
         if (p2 == 0)        //child 2 for input redirection
         {
-            printf("fd[1] %d \n", fd[1]);
-            //dup2(STDOUT_FILENO, fd[1]);
             close(STDOUT_FILENO);
             dup(fd[1]);
             close(fd[0]);
             close(fd[1]);
-            if (execv(cmd1.tokens[0], cmd1.tokens) == -1)
+            if (execv(cmd1.tokens[0], cmd1.tokens) < 0)
             {
-                printf("%s", cmd1.tokens[0]);
+                printf("Command could not be executed. \n" );
             }
             exit(0);
         }
         else
         {
             waitpid(p2, &status, 0);
-            //wait(NULL);
 
-            //dup2(STDIN_FILENO, fd[0]);
             close(STDIN_FILENO);
             dup(fd[0]);
             close(fd[0]);
             close(fd[1]);
             if (execv(cmd2.tokens[0], cmd2.tokens) < 0)
             {
-                printf("Command 2 a big could not be executed. \n" );
+                printf("Command could not be executed. \n" );
             }
             exit(0);
         }
@@ -380,13 +374,12 @@ void singlepipe(instruction * instr_ptr, int bGround)
     {
         waitpid(p1, &status, 0);
         waitpid(p2, &status, 0);
-        //wait(NULL);
-        //wait(NULL);
+
     }
-    free(temp1);
-    free(temp2);
 
     // exit(1);
+    clearInstruction(&cmd1); 
+    clearInstruction(&cmd2); 
 
 }//end of single pipe
 
