@@ -239,7 +239,8 @@ Known Bugs/Unfinished Portions:
 
 Special Considerations: 
 
-• The "Shell-ception" extra credit was completed.
+- The "Shell-ception" extra credit was completed.
+- For the exit function, when outputting the number of commands, we reffered to each time the user pressed 'enter' as a new command
 
 
 
