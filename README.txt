@@ -94,6 +94,10 @@ Function Descriptions:
   - The parent program then calls the wait function to wait for the child processes to finish
 
 7. void doublepipe( instruction* instr_ptr, int bGround)
+  - This function takes in the instruction pointer, and an integer which will equal 1 if the command should be run in the background or 0 if the command should not
+  - command holder variables are made and initialized
+  - The loop copies over the tokens of each part to the three command variables
+  - The three children processes each call execute on the three commands
 
 8. void enVar(instruction* instr_ptr)
   - For loops through tokens of instruction
